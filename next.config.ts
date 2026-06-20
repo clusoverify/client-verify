@@ -7,9 +7,6 @@ const nextConfig: NextConfig = {
   // Disable x-powered-by header for security
   poweredByHeader: false,
 
-  // Enable standalone output for Vercel (optimized cold starts)
-  output: "standalone",
-
   // Security headers (also defined in vercel.json for edge)
   headers: async () => [
     {

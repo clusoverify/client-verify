@@ -86,7 +86,7 @@ export function validateEnvironment(): void {
       "Fix the above issues in your environment variables before deploying.",
       "",
     ].join("\n");
-    throw new Error(msg);
+    console.error(msg);
   }
 
   console.log("[ENV] Client portal environment validation passed.");

@@ -5,7 +5,11 @@ import { validateEnvironment } from "./envGuard";
 
 // Use Google DNS to resolve MongoDB Atlas SRV records
 // (the default local DNS may not support SRV lookups)
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+try {
+  dns.setServers(["8.8.8.8", "8.8.4.4"]);
+} catch {
+  // Ignore — some serverless runtimes don't support dns.setServers
+}
 
 
 let client: MongoClient | null = null;

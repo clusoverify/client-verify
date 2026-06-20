@@ -8,6 +8,14 @@ import { isAccountLocked, recordFailedLogin, resetLoginFailures } from "shared/r
 const useSecureCookies = process.env.NODE_ENV === "production";
 const cookiePrefix = useSecureCookies ? "__Secure-" : "";
 
+if (!process.env.NEXTAUTH_SECRET && process.env.NODE_ENV === "production") {
+  console.error(
+    "\n[FATAL] NEXTAUTH_SECRET is not set!\n" +
+    "NextAuth requires an explicit secret in production.\n" +
+    "Set NEXTAUTH_SECRET in your Vercel Environment Variables and redeploy.\n"
+  );
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({

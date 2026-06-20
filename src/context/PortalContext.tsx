@@ -194,7 +194,13 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [isAuthenticated]);
 
   const addVerification = async (name: string, email: string, orgName: string) => {
-    const newId = `REQ-${Math.floor(1000 + Math.random() * 9000)}`;
+    const cleanOrg = orgName.replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, "0");
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const yy = String(now.getFullYear()).slice(-2);
+    const dateStr = `${dd}${mm}${yy}`;
+    const newId = `${cleanOrg}${dateStr}-${Math.floor(1000 + Math.random() * 9000)}`;
     const newRecord: Verification = {
       id: newId,
       name,

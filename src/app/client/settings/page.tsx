@@ -13,7 +13,8 @@ import {
   Sparkles,
   Save,
   RotateCcw,
-  FileText
+  FileText,
+  Database
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -47,6 +48,11 @@ export default function SettingsPage() {
   const [saveAlert, setSaveAlert] = useState("");
   const [passwordAlert, setPasswordAlert] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  // MongoDB connection state
+  const [mongoAlert, setMongoAlert] = useState("");
+  const [mongoError, setMongoError] = useState("");
+  const [mongoLoading, setMongoLoading] = useState(false);
 
   // Load context settings into local state
   useEffect(() => {
@@ -142,6 +148,28 @@ export default function SettingsPage() {
       setTimeout(() => setPasswordAlert(""), 3000);
     } catch (err: any) {
       setPasswordError(err?.message || "An unexpected error occurred.");
+    }
+  };
+
+  const handleRefreshMongo = async () => {
+    setMongoAlert("");
+    setMongoError("");
+    setMongoLoading(true);
+    try {
+      const res = await fetch("/api/mongodb/refresh", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setMongoError(data.error || "Failed to refresh MongoDB connection");
+      } else {
+        setMongoAlert("MongoDB connection refreshed successfully!");
+        setTimeout(() => setMongoAlert(""), 3000);
+      }
+    } catch (err: any) {
+      setMongoError(err?.message || "An unexpected error occurred.");
+    } finally {
+      setMongoLoading(false);
     }
   };
 
@@ -398,6 +426,49 @@ export default function SettingsPage() {
                 Update Password
               </button>
             </form>
+          </div>
+
+          {/* MongoDB Connection Card */}
+          <div className="bg-white border border-[#C6E7FF] rounded-3xl p-8 shadow-sm relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#C6E7FF]"></div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2.5 bg-[#D4F6FF]/40 border border-[#C6E7FF]/60 rounded-2xl">
+                <Database className="w-5 h-5 text-[#1E3A5F]" />
+              </div>
+              <h3 className="font-semibold text-lg text-[#0F172A]">Database Connection</h3>
+            </div>
+            
+            {mongoAlert && (
+              <div className="bg-[#E6F8F3] text-[#00684A] border border-[#A3EAD6] rounded-xl p-3 text-xs mb-4 flex items-center gap-2 shadow-2xs">
+                <CheckCircle className="w-4 h-4 text-[#00a877] shrink-0" />
+                <span className="font-semibold">{mongoAlert}</span>
+              </div>
+            )}
+            
+            {mongoError && (
+              <div className="bg-red-50 text-red-800 border border-red-200 rounded-xl p-3 text-xs mb-4 flex items-center gap-2 shadow-2xs">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                <span className="font-semibold">{mongoError}</span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-4 relative z-10 text-left">
+              <p className="text-[#475569] text-xs leading-relaxed font-semibold">
+                If the application experiences connection timeouts or issues communicating with MongoDB Atlas, you can reset the cached connection pool and re-establish a fresh connection.
+              </p>
+              <button
+                onClick={handleRefreshMongo}
+                disabled={mongoLoading}
+                className="w-full bg-[#0F172A] text-white font-bold text-xs py-3 px-4 rounded-xl hover:bg-[#1E293B] active:scale-95 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {mongoLoading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <RotateCcw className="w-4 h-4" />
+                )}
+                <span>{mongoLoading ? "Refreshing..." : "Refresh MongoDB Connection"}</span>
+              </button>
+            </div>
           </div>
 
         </div>

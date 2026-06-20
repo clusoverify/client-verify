@@ -46,6 +46,21 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
   return { client: connectedClient, db };
 }
 
+export async function disconnectFromDatabase(): Promise<void> {
+  if (client) {
+    try {
+      await client.close();
+    } catch (e) {
+      console.error("[MongoDB] Error closing connection:", e);
+    }
+  }
+  client = null;
+  clientPromise = null;
+  seeded = false;
+  envValidated = false;
+}
+
+
 
 async function seedDatabase(db: Db) {
   try {

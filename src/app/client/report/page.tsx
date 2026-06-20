@@ -213,6 +213,14 @@ function ReportContent() {
                   <td className="p-2.5 font-mono">{verification.digilockerAadhaarMasked || verification.digilockerAadhaar || verification.aadhaarNumber || "-"}</td>
                 </tr>
                 <tr>
+                  <td className="p-2.5 border-r border-slate-200 bg-slate-50/50">PAN card number</td>
+                  <td className="p-2.5 font-mono">{verification.digilockerPan || "-"}</td>
+                </tr>
+                <tr>
+                  <td className="p-2.5 border-r border-slate-200 bg-slate-50/50">Driving licence number</td>
+                  <td className="p-2.5 font-mono">{verification.digilockerDrivingLicence || "-"}</td>
+                </tr>
+                <tr>
                   <td className="p-2.5 border-r border-slate-200 bg-slate-50/50">Email address</td>
                   <td className="p-2.5">{verification.digilockerEmail || verification.email}</td>
                 </tr>

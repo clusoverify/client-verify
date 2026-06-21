@@ -34,6 +34,14 @@ export async function GET(req: NextRequest) {
 
     // Decrypt all encrypted PII fields for detail view
     const decrypted: any = { ...verification, _id: verification._id.toString() };
+
+    // Generate setupUrl on-the-fly if missing but email and tempPassword exist
+    if (!decrypted.setupUrl && decrypted.tempPassword && decrypted.email) {
+      const candidatePortalUrl = process.env.CANDIDATE_PORTAL_URL || "https://candidate.verify.cluso.in";
+      decrypted.setupUrl = `${candidatePortalUrl}/?email=${encodeURIComponent(decrypted.email.toLowerCase().trim())}&password=${encodeURIComponent(decrypted.tempPassword)}`;
+    }
+    delete decrypted.tempPassword;
+    delete decrypted.password;
     
     if (decrypted.aadhaarNumber) {
       decrypted.aadhaarNumber = decryptOrPassthrough(decrypted.aadhaarNumber);

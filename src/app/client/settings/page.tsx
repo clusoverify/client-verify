@@ -45,6 +45,7 @@ export default function SettingsPage() {
 
   // UI state
   const [saveAlert, setSaveAlert] = useState("");
+  const [saveError, setSaveError] = useState("");
   const [passwordAlert, setPasswordAlert] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -69,6 +70,20 @@ export default function SettingsPage() {
 
   const handleSaveAll = () => {
     setSaveAlert("");
+    setSaveError("");
+
+    const missing = [];
+    if (!contactFirstName.trim()) missing.push("First Name");
+    if (!contactLastName.trim()) missing.push("Last Name");
+    if (!address.trim()) missing.push("Registered Address");
+    if (!city.trim()) missing.push("City");
+    if (!postalCode.trim()) missing.push("Postal Code (Zipcode)");
+
+    if (missing.length > 0) {
+      setSaveError(`Please fill in all mandatory fields: ${missing.join(", ")}`);
+      return;
+    }
+
     updateSettings({
       companyName,
       address,
@@ -102,6 +117,7 @@ export default function SettingsPage() {
       setBillingOption(settings.billingOption || "invoice");
       
       setSaveAlert("Changes discarded. Reloaded saved configuration.");
+      setSaveError("");
       setTimeout(() => setSaveAlert(""), 3000);
     }
   };
@@ -167,6 +183,13 @@ export default function SettingsPage() {
         </div>
       )}
 
+      {saveError && (
+        <div className="bg-red-50 text-red-800 border border-red-200 rounded-xl p-4 font-body-sm flex items-center gap-3 max-w-5xl animate-fade-in shadow-2xs">
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+          <span className="font-semibold">{saveError}</span>
+        </div>
+      )}
+
       {/* Bento Grid Layout for Forms */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 max-w-6xl">
         {/* Left Column (Wider - Spans 2 columns on xl screens) */}
@@ -188,12 +211,12 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold"
+                  disabled
+                  className="w-full bg-[#F1F5F9]/80 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-slate-500 cursor-not-allowed transition-all font-semibold opacity-75"
                 />
               </div>
               <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Registered Address</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Registered Address <span className="text-red-500 font-bold">*</span></label>
                 <input
                   type="text"
                   value={address}
@@ -202,7 +225,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">City</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">City <span className="text-red-500 font-bold">*</span></label>
                 <input
                   type="text"
                   value={city}
@@ -211,7 +234,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Postal Code</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Postal Code (Zipcode) <span className="text-red-500 font-bold">*</span></label>
                 <input
                   type="text"
                   value={postalCode}
@@ -234,7 +257,7 @@ export default function SettingsPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
               <div className="flex flex-col gap-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">First Name</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">First Name <span className="text-red-500 font-bold">*</span></label>
                 <input
                   type="text"
                   value={contactFirstName}
@@ -243,7 +266,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Last Name</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Last Name <span className="text-red-500 font-bold">*</span></label>
                 <input
                   type="text"
                   value={contactLastName}
@@ -256,8 +279,8 @@ export default function SettingsPage() {
                 <input
                   type="email"
                   value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
-                  className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold"
+                  disabled
+                  className="w-full bg-[#F1F5F9]/80 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-slate-500 cursor-not-allowed transition-all font-semibold opacity-75"
                 />
               </div>
             </div>
@@ -275,17 +298,17 @@ export default function SettingsPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
               <div className="flex flex-col gap-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">CIN (Corporate Identification Number)</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Company Registration Number (Optional)</label>
                 <input
                   type="text"
-                  placeholder="Enter CIN"
+                  placeholder="Enter registration number"
                   value={cin}
                   onChange={(e) => setCin(e.target.value)}
                   className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">LUT Entry</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">LUT Entry (Optional)</label>
                 <input
                   type="text"
                   placeholder="Enter LUT"
@@ -295,7 +318,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Tax Identification Number</label>
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Tax Identification Number (Optional)</label>
                 <input
                   type="text"
                   placeholder="Enter TIN"

@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     // Verifications: only records belonging to this client's organisation and not soft-deleted
     const verifications = await db.collection("verifications").find(
       { orgName, isDeleted: { $ne: true } },
-      { projection: { tempPassword: 0, password: 0 } }
+      { projection: { password: 0 } }
     ).toArray();
 
     // Invoices: only invoices for this client's organisation and not soft-deleted
@@ -167,6 +167,10 @@ export async function POST(req: NextRequest) {
           notes: notes || "Verification request created by client."
         };
 
+        // Build the direct login URL (with email and password query parameters)
+        const candidatePortalUrl = process.env.CANDIDATE_PORTAL_URL || "https://candidate.verify.cluso.in";
+        const setupUrl = `${candidatePortalUrl}/?email=${encodeURIComponent(email.toLowerCase().trim())}&password=${encodeURIComponent(tempPassword)}`;
+
         await db.collection("verifications").insertOne({
           id,
           name,
@@ -178,12 +182,9 @@ export async function POST(req: NextRequest) {
           notes,
           onboardingStatus: "active",
           tempPassword,
-          attempts: [initialAttempt]
+          attempts: [initialAttempt],
+          setupUrl
         });
-
-        // Build the direct login URL (with email and password query parameters)
-        const candidatePortalUrl = process.env.CANDIDATE_PORTAL_URL || "https://candidate.verify.cluso.in";
-        const setupUrl = `${candidatePortalUrl}/?email=${encodeURIComponent(email.toLowerCase().trim())}&password=${encodeURIComponent(tempPassword)}`;
 
         await logAuditEvent(db, {
           actorUserId: user.id,

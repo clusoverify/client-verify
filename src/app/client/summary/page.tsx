@@ -98,6 +98,19 @@ export default function OrderSummaryPage() {
     setTimeout(() => setCopiedField(null), 2000);
   };
 
+  const getUrlParams = (urlStr?: string) => {
+    if (!urlStr) return { email: "", password: "" };
+    try {
+      const url = new URL(urlStr);
+      return {
+        email: url.searchParams.get("email") || "",
+        password: url.searchParams.get("password") || ""
+      };
+    } catch (e) {
+      return { email: "", password: "" };
+    }
+  };
+
   const getPhotoSrc = (photo: string) => {
     if (!photo) return "";
     if (photo.startsWith("data:image/svg+xml;utf8,")) {
@@ -496,7 +509,7 @@ export default function OrderSummaryPage() {
 
       {/* View Report Detail Modal */}
       {selectedVerification && (
-        <div className="fixed inset-0 bg-[#0F172A]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+        <div className="fixed inset-0 bg-slate-400/10 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className={`bg-white border border-[#C6E7FF] rounded-3xl p-8 w-full shadow-2xl relative max-h-[85vh] overflow-y-auto ${displayVerification?.digilockerStatus === "Verified" ? "max-w-3xl" : "max-w-lg"}`}>
             <button
               onClick={() => {
@@ -670,6 +683,64 @@ export default function OrderSummaryPage() {
                         </div>
                       </div>
 
+                      {displayVerification.status !== "Completed" && displayVerification.setupUrl && (
+                        <div className="w-full mt-4 p-5 bg-[#D4F6FF]/25 border border-[#C6E7FF] rounded-2xl text-left flex flex-col gap-3 relative overflow-hidden shadow-2xs">
+                          <div className="absolute right-3 top-3">
+                            <span className="text-[9px] uppercase font-bold tracking-wider text-[#0F172A] bg-white border border-[#C6E7FF] px-2 py-0.5 rounded animate-pulse">
+                              Direct Login Link
+                            </span>
+                          </div>
+                          
+                          <div className="flex flex-col gap-1 pt-3">
+                            <span className="font-label-caps text-[#334155] text-[10px] uppercase font-semibold tracking-wider">Candidate Direct Login Link</span>
+                            <p className="text-[11px] text-[#475569] leading-relaxed mb-2">
+                              Share this direct login link with the candidate. Credentials are embedded and will pre-fill automatically.
+                            </p>
+                            <div className="flex items-center justify-between bg-white px-3 py-2.5 rounded-xl border border-[#C6E7FF]/60 gap-3 mt-1 shadow-2xs">
+                              <span className="font-mono text-xs text-[#0F172A] truncate max-w-[65%]" title={displayVerification.setupUrl}>
+                                {displayVerification.setupUrl}
+                              </span>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(displayVerification.setupUrl || "");
+                                    setCopiedUrl(true);
+                                    setTimeout(() => setCopiedUrl(false), 2000);
+                                  }}
+                                  className="text-xs px-3 py-1.5 bg-[#0F172A] text-white rounded-lg font-semibold hover:bg-[#1E293B] transition-all flex items-center gap-1.5 cursor-pointer"
+                                >
+                                  {copiedUrl ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                                  <span>{copiedUrl ? "Copied" : "Copy"}</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Pre-filled credentials detail */}
+                            {(() => {
+                              const params = getUrlParams(displayVerification.setupUrl);
+                              return (
+                                <div className="mt-3 p-4 bg-white/70 border border-[#C6E7FF]/40 rounded-2xl text-xs flex flex-col gap-2.5 shadow-2xs">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[#475569] font-semibold uppercase tracking-wider text-[10px] font-label-caps">Candidate Email ID</span>
+                                    <span className="font-mono text-[#0F172A] font-bold text-xs select-all">{params.email}</span>
+                                  </div>
+                                  <div className="flex justify-between items-center border-t border-[#D4F6FF]/30 pt-2">
+                                    <span className="text-[#475569] font-semibold uppercase tracking-wider text-[10px] font-label-caps">Temporary Password</span>
+                                    <span className="font-mono text-[#0F172A] font-bold text-xs select-all">{params.password}</span>
+                                  </div>
+                                </div>
+                              );
+                            })()}
+
+                            <div className="flex items-center gap-1.5 mt-2.5 text-[10px] text-[#64748B]">
+                              <Sparkles className="w-3 h-3 text-[#1E3A5F]" />
+                              <span>The candidate can log in directly using this link without setting a password.</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="text-left">
                         <span className="font-label-caps text-[#475569] text-[10px] uppercase font-bold tracking-wider block mb-1">
                           Verification Findings &amp; Summary
@@ -736,7 +807,7 @@ export default function OrderSummaryPage() {
  
       {/* View Billing History Modal */}
       {billingHistoryOpen && (
-        <div className="fixed inset-0 bg-[#0F172A]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+        <div className="fixed inset-0 bg-slate-400/10 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white border border-[#C6E7FF] rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative max-h-[80vh] overflow-y-auto">
             <button
               onClick={() => setBillingHistoryOpen(false)}
@@ -817,7 +888,7 @@ export default function OrderSummaryPage() {
  
       {/* Payment Modal */}
       {activeInvoice && (
-        <div className="fixed inset-0 bg-[#0F172A]/30 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+        <div className="fixed inset-0 bg-slate-400/10 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white border border-[#C6E7FF] rounded-3xl p-8 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => {

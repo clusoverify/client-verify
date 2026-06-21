@@ -196,7 +196,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
       {/* Sidebar - Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#0F172A]/30 backdrop-blur-xs z-40 md:hidden" onClick={() => setMobileMenuOpen(false)}>
+        <div className="fixed inset-0 bg-slate-400/10 backdrop-blur-xs z-40 md:hidden" onClick={() => setMobileMenuOpen(false)}>
           <aside
             className="w-64 h-full bg-gradient-to-b from-[#C6E7FF] to-[#D4F6FF] border-r border-[#C6E7FF] flex flex-col py-stack-lg animate-slide-right"
             onClick={(e) => e.stopPropagation()}

@@ -46,6 +46,18 @@ export default function IdentityVerification() {
     setErrorMsg("");
     setSuccessMsg("");
 
+    const isSettingsIncomplete = !settings || 
+      !settings.contactFirstName?.trim() || 
+      !settings.contactLastName?.trim() || 
+      !settings.address?.trim() || 
+      !settings.city?.trim() || 
+      !settings.postalCode?.trim();
+
+    if (isSettingsIncomplete) {
+      setErrorMsg("Please complete your profile settings (First Name, Last Name, Address, City, and Postal Code) before creating requests.");
+      return;
+    }
+
     if (!candidateName.trim()) {
       setErrorMsg("Candidate Name is required");
       return;
@@ -98,6 +110,13 @@ export default function IdentityVerification() {
     setOrgName(isAdmin ? "" : (profile?.org_name || ""));
   };
 
+  const isSettingsIncomplete = !settings || 
+    !settings.contactFirstName?.trim() || 
+    !settings.contactLastName?.trim() || 
+    !settings.address?.trim() || 
+    !settings.city?.trim() || 
+    !settings.postalCode?.trim();
+
   return (
     <div className="flex flex-col gap-6 pt-4 animate-fade-in pb-12">
       <div className="flex flex-col gap-1 border-b border-[#D4F6FF] pb-5 mb-2">
@@ -108,6 +127,25 @@ export default function IdentityVerification() {
         <h2 className="font-display-lg text-primary font-bold tracking-tight text-3xl mt-2 text-[#0F172A]">Candidate Verification</h2>
         <p className="text-secondary mt-1 text-sm">Initiate a new identity verification request for a candidate.</p>
       </div>
+
+      {/* Settings incomplete warning banner */}
+      {isSettingsIncomplete && (
+        <div className="bg-[#FFF8E6] text-[#8A5E00] border border-[#FFE7A3] rounded-xl p-4 font-body-sm flex items-start gap-3 max-w-2xl animate-fade-in shadow-2xs">
+          <AlertCircle className="w-5 h-5 text-[#D97706] shrink-0 mt-0.5" />
+          <div className="flex flex-col gap-1">
+            <span className="font-bold">Missing Required Profile Information</span>
+            <p className="text-xs text-[#92400E] font-semibold leading-relaxed">
+              You must set your First Name, Last Name, Address, City, and Postal Code (Zipcode) in Settings before you can create verification requests.
+            </p>
+            <button
+              onClick={() => router.push("/client/settings")}
+              className="mt-2 text-xs font-bold text-[#0F172A] hover:underline flex items-center gap-1 w-fit"
+            >
+              Go to Settings <ExternalLink className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Form Alerts */}
       {successMsg && !createdCredentials && (
@@ -152,7 +190,10 @@ export default function IdentityVerification() {
               value={candidateName}
               onChange={(e) => setCandidateName(e.target.value)}
               autoComplete="off"
-              className="border border-[#C6E7FF] rounded-xl p-3.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all bg-[#FBFBFB]/50 placeholder-slate-400 font-semibold"
+              disabled={isSettingsIncomplete}
+              className={`border border-[#C6E7FF] rounded-xl p-3.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all bg-[#FBFBFB]/50 placeholder-slate-400 font-semibold ${
+                isSettingsIncomplete ? "bg-slate-100/60 text-slate-500 cursor-not-allowed border-slate-200 opacity-80" : ""
+              }`}
               placeholder="Enter the candidate name"
             />
           </div>
@@ -168,7 +209,10 @@ export default function IdentityVerification() {
               value={candidateEmail}
               onChange={(e) => setCandidateEmail(e.target.value)}
               autoComplete="off"
-              className="border border-[#C6E7FF] rounded-xl p-3.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all bg-[#FBFBFB]/50 placeholder-slate-400 font-semibold"
+              disabled={isSettingsIncomplete}
+              className={`border border-[#C6E7FF] rounded-xl p-3.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all bg-[#FBFBFB]/50 placeholder-slate-400 font-semibold ${
+                isSettingsIncomplete ? "bg-slate-100/60 text-slate-500 cursor-not-allowed border-slate-200 opacity-80" : ""
+              }`}
               placeholder="Enter the candidate email ID"
             />
           </div>
@@ -184,9 +228,9 @@ export default function IdentityVerification() {
               value={orgName}
               onChange={(e) => setOrgName(e.target.value)}
               autoComplete="off"
-              disabled={!isAdmin}
+              disabled={!isAdmin || isSettingsIncomplete}
               className={`border border-[#C6E7FF] rounded-xl p-3.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all bg-[#FBFBFB]/50 placeholder-slate-400 font-semibold ${
-                !isAdmin ? "bg-slate-100/60 text-slate-500 cursor-not-allowed border-slate-200" : ""
+                (!isAdmin || isSettingsIncomplete) ? "bg-slate-100/60 text-slate-500 cursor-not-allowed border-slate-200" : ""
               }`}
               placeholder={isAdmin ? "Enter target client organization name (e.g., TCS)" : "Enter the organization name requiring the verification"}
             />
@@ -197,13 +241,19 @@ export default function IdentityVerification() {
             <button
               type="button"
               onClick={handleCancel}
-              className="px-6 py-3 border border-[#C6E7FF] rounded-xl font-semibold text-sm text-[#334155] hover:bg-[#FBFBFB] hover:text-[#0F172A] transition-all cursor-pointer bg-white"
+              disabled={isSettingsIncomplete}
+              className={`px-6 py-3 border border-[#C6E7FF] rounded-xl font-semibold text-sm text-[#334155] hover:bg-[#FBFBFB] hover:text-[#0F172A] transition-all bg-white ${
+                isSettingsIncomplete ? "opacity-50 cursor-not-allowed hover:bg-white hover:text-[#334155]" : "cursor-pointer"
+              }`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-3 bg-[#0F172A] text-white hover:bg-[#1E293B] active:scale-95 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-sm group"
+              disabled={isSettingsIncomplete}
+              className={`px-6 py-3 bg-[#0F172A] text-white hover:bg-[#1E293B] active:scale-95 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 shadow-sm group ${
+                isSettingsIncomplete ? "opacity-50 cursor-not-allowed hover:bg-[#0F172A] active:scale-100" : "cursor-pointer"
+              }`}
             >
               <span>Create Request</span>
               <Send className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -214,7 +264,7 @@ export default function IdentityVerification() {
 
       {/* Credentials Modal */}
       {createdCredentials && (
-        <div className="fixed inset-0 bg-[#0F172A]/30 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
+        <div className="fixed inset-0 bg-slate-400/10 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white border border-[#C6E7FF] rounded-3xl p-8 max-w-lg w-full shadow-2xl relative animate-scale-up">
             <div className="flex flex-col items-center text-center gap-4">
               <div className="w-16 h-16 bg-[#E6F8F3] border border-[#A3EAD6] rounded-full flex items-center justify-center text-[#00684A] mb-2 animate-bounce-subtle">

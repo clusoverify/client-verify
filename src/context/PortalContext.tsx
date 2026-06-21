@@ -31,6 +31,7 @@ export interface Verification {
   digilockerPhoto?: string;
   digilockerDocuments?: any[];
   completedAt?: Date | string;
+  setupUrl?: string;
 }
 
 export interface Invoice {

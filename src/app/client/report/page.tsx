@@ -389,6 +389,10 @@ function ReportContent() {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
           }
+          .print-border {
+            box-decoration-break: clone !important;
+            -webkit-box-decoration-break: clone !important;
+          }
           table, tr, td, th, img {
             page-break-inside: avoid !important;
             break-inside: avoid !important;

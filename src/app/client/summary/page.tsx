@@ -234,6 +234,23 @@ export default function OrderSummaryPage() {
     .filter((inv) => inv.status === "Unpaid" || inv.status === "Overdue")
     .reduce((sum, inv) => sum + inv.amount, 0);
 
+  // Real-time: count completed verifications for the current month
+  const now = new Date();
+  const currentMonthName = now.toLocaleDateString("en-US", { month: "long" });
+  const currentYear = now.getFullYear();
+  const currentMonthCompleted = clientVerifications.filter((v) => {
+    if (v.status !== "Completed") return false;
+    try {
+      const d = new Date(v.completedAt || v.date);
+      if (isNaN(d.getTime())) return false;
+      return d.getMonth() === now.getMonth() && d.getFullYear() === currentYear;
+    } catch {
+      return false;
+    }
+  }).length;
+  const perVerificationRate = organisation?.monthlyRate || 0;
+  const currentMonthRunningTotal = currentMonthCompleted * perVerificationRate;
+
   // UI state for filter modal, active report modal, billing history modal, and report toast
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
@@ -432,13 +449,27 @@ export default function OrderSummaryPage() {
             </div>
             
             <div className="relative z-10">
-              <p className="font-label-caps text-[#475569] text-[10px] font-bold tracking-wider uppercase mb-1">Current Balance</p>
+              <p className="font-label-caps text-[#475569] text-[10px] font-bold tracking-wider uppercase mb-1">Current Dues</p>
               <p className="font-display-lg text-[#0F172A] font-bold tracking-tight text-3xl">${unpaidBalance.toFixed(2)}</p>
               <p className="text-slate-500 text-xs mt-1 font-medium">Due by next statement</p>
             </div>
 
+            {/* Real-time Current Month Running Total */}
+            {currentMonthCompleted > 0 && (
+              <div className="relative z-10 mt-1 p-3 bg-[#D4F6FF]/25 border border-[#C6E7FF]/50 rounded-xl">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-label-caps text-[10px] text-[#475569] font-bold tracking-wider uppercase">{currentMonthName} {currentYear}</span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#C6E7FF]/40 text-[#0F172A] border border-[#C6E7FF] uppercase">Live</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-xs text-[#475569] font-medium">{currentMonthCompleted} verification{currentMonthCompleted !== 1 ? "s" : ""} × ${perVerificationRate.toFixed(2)}</span>
+                  <span className="font-bold text-sm text-[#0F172A]">${currentMonthRunningTotal.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-3 relative z-10 mt-2">
-              {clientInvoices.slice(0, 2).map((inv) => (
+              {clientInvoices.filter(inv => inv.status !== "Paid").slice(0, 3).map((inv) => (
                 <div key={inv._id || inv.id} className="flex justify-between items-center border-b border-[#D4F6FF]/40 pb-2">
                   <div className="flex flex-col">
                     <span className="font-semibold text-xs text-[#0F172A]">{inv.id}</span>

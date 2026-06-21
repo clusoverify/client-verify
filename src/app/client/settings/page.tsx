@@ -34,6 +34,10 @@ export default function SettingsPage() {
   const [cin, setCin] = useState("");
   const [lut, setLut] = useState("");
   const [tin, setTin] = useState("");
+  const [gstin, setGstin] = useState("");
+  const [invoiceEmail, setInvoiceEmail] = useState("");
+  const [billingSameAsCompany, setBillingSameAsCompany] = useState(true);
+  const [billingAddress, setBillingAddress] = useState("");
 
   // Billing
   const [billingOption, setBillingOption] = useState<"invoice" | "card">("invoice");
@@ -64,6 +68,10 @@ export default function SettingsPage() {
       setCin(settings.cin || "");
       setLut(settings.lut || "");
       setTin(settings.tin || "");
+      setGstin(settings.gstin || "");
+      setInvoiceEmail(settings.invoiceEmail || "");
+      setBillingSameAsCompany(settings.billingSameAsCompany !== undefined ? settings.billingSameAsCompany : true);
+      setBillingAddress(settings.billingAddress || "");
       setBillingOption(settings.billingOption || "invoice");
     }
   }, [settings]);
@@ -96,6 +104,10 @@ export default function SettingsPage() {
       cin,
       lut,
       tin,
+      gstin,
+      invoiceEmail,
+      billingSameAsCompany,
+      billingAddress,
     });
     setSaveAlert("All profile settings updated successfully!");
     setTimeout(() => setSaveAlert(""), 3000);
@@ -114,6 +126,10 @@ export default function SettingsPage() {
       setCin(settings.cin || "");
       setLut(settings.lut || "");
       setTin(settings.tin || "");
+      setGstin(settings.gstin || "");
+      setInvoiceEmail(settings.invoiceEmail || "");
+      setBillingSameAsCompany(settings.billingSameAsCompany !== undefined ? settings.billingSameAsCompany : true);
+      setBillingAddress(settings.billingAddress || "");
       setBillingOption(settings.billingOption || "invoice");
       
       setSaveAlert("Changes discarded. Reloaded saved configuration.");
@@ -317,7 +333,7 @@ export default function SettingsPage() {
                   className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold"
                 />
               </div>
-              <div className="flex flex-col gap-2 md:col-span-2">
+              <div className="flex flex-col gap-2">
                 <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Tax Identification Number (Optional)</label>
                 <input
                   type="text"
@@ -327,6 +343,49 @@ export default function SettingsPage() {
                   className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold"
                 />
               </div>
+              <div className="flex flex-col gap-2">
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">GSTIN (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="Enter GSTIN"
+                  value={gstin}
+                  onChange={(e) => setGstin(e.target.value)}
+                  className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold"
+                />
+              </div>
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Invoice Email (Optional)</label>
+                <input
+                  type="email"
+                  placeholder="Enter invoice billing email"
+                  value={invoiceEmail}
+                  onChange={(e) => setInvoiceEmail(e.target.value)}
+                  className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold"
+                />
+              </div>
+              <div className="flex flex-col gap-2 md:col-span-2">
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Billing Address same as Company Address?</label>
+                <select
+                  value={billingSameAsCompany ? "yes" : "no"}
+                  onChange={(e) => setBillingSameAsCompany(e.target.value === "yes")}
+                  className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold cursor-pointer"
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+              {!billingSameAsCompany && (
+                <div className="flex flex-col gap-2 md:col-span-2 animate-fade-in">
+                  <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Billing Address</label>
+                  <textarea
+                    placeholder="Enter custom billing address"
+                    value={billingAddress}
+                    onChange={(e) => setBillingAddress(e.target.value)}
+                    rows={2}
+                    className="w-full bg-[#FBFBFB]/50 border border-[#C6E7FF] rounded-xl px-4 py-2.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all font-semibold resize-none font-sans"
+                  />
+                </div>
+              )}
             </div>
           </div>
 

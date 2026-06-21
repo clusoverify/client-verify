@@ -202,14 +202,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, setupUrl });
       }
       case "updateSettings": {
-        const { companyName, address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin } = payload;
+        const { companyName, address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin, gstin, invoiceEmail, billingSameAsCompany, billingAddress } = payload;
         // Security: always scope settings update to the session user's org
         await db.collection("settings").updateOne(
           { companyName: sessionOrgName },
           {
             $set: {
               companyName: sessionOrgName,
-              address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin
+              address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin, gstin, invoiceEmail, billingSameAsCompany, billingAddress
             }
           },
           { upsert: true }

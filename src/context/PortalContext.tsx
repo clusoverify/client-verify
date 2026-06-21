@@ -66,6 +66,10 @@ export interface CompanySettings {
   cin: string;
   lut: string;
   tin: string;
+  gstin: string;
+  invoiceEmail: string;
+  billingSameAsCompany: boolean;
+  billingAddress: string;
 }
 
 export interface Organisation {
@@ -113,7 +117,11 @@ const defaultSettings: CompanySettings = {
   billingOption: "invoice",
   cin: "",
   lut: "",
-  tin: ""
+  tin: "",
+  gstin: "",
+  invoiceEmail: "",
+  billingSameAsCompany: true,
+  billingAddress: ""
 };
 
 export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -150,7 +158,11 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           billingOption: data.settings.billingOption,
           cin: data.settings.cin || "",
           lut: data.settings.lut || "",
-          tin: data.settings.tin || ""
+          tin: data.settings.tin || "",
+          gstin: data.settings.gstin || "",
+          invoiceEmail: data.settings.invoiceEmail || "",
+          billingSameAsCompany: data.settings.billingSameAsCompany !== undefined ? data.settings.billingSameAsCompany : true,
+          billingAddress: data.settings.billingAddress || ""
         });
       }
 

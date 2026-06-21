@@ -521,17 +521,17 @@ export default function OrderSummaryPage() {
             <div className="relative z-10 flex flex-col gap-1">
               <h3 className="font-semibold text-base text-white flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#FFDDAE]" />
-                <span>Need a detailed audit?</span>
+                <span>Billable Requests Summary</span>
               </h3>
               <p className="text-xs text-slate-300 leading-relaxed mt-1.5 font-medium">
-                Download a comprehensive PDF of all activities for compliance records.
+                Download a comprehensive PDF summary of all billable requests for compliance records.
               </p>
             </div>
             <button
-              onClick={handleDownload}
+              onClick={() => window.open("/client/billable-summary", "_blank")}
               className="mt-2 w-full py-2.5 bg-[#C6E7FF] text-[#0F172A] font-bold text-sm rounded-xl hover:bg-white active:scale-95 transition-all shadow-sm relative z-10 flex justify-center items-center gap-2 group cursor-pointer"
             >
-              <span>Generate Compliance PDF</span>
+              <span>Download Billable Summary</span>
               <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
             </button>
           </section>

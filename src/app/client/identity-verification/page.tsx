@@ -205,7 +205,7 @@ export default function IdentityVerification() {
               type="submit"
               className="px-6 py-3 bg-[#0F172A] text-white hover:bg-[#1E293B] active:scale-95 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-sm group"
             >
-              <span>Send Request</span>
+              <span>Create Request</span>
               <Send className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
           </div>

@@ -275,7 +275,7 @@ function ReportContent() {
         </div>
 
         {/* Service Verification Summary */}
-        <div className="mb-8">
+        <div className="mb-8 print-break-before">
           <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#1B365D] border-b border-slate-200 pb-1 mb-3">Service Verification Summary</h3>
           
           <div className="space-y-4">
@@ -425,6 +425,10 @@ function ReportContent() {
           .print-avoid-break {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
+          }
+          .print-break-before {
+            page-break-before: always !important;
+            break-before: page !important;
           }
           .no-print {
             display: none !important;

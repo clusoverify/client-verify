@@ -133,7 +133,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const displayName = profile?.full_name || user?.email || "User";
   const displayOrg = profile?.org_name || settings.companyName || "Company";
 
-  if (pathname.includes("/client/report")) {
+  if (pathname.includes("/client/report") || pathname.includes("/client/billable-summary")) {
     return <>{children}</>;
   }
 

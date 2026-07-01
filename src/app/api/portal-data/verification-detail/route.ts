@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     if (isErrorResponse(authResult)) return authResult;
     const { user } = authResult;
 
-    const roleError = requireRole(user, ["client"]);
+    const roleError = requireRole(user, ["client", "org_owner"]);
     if (roleError) return roleError;
 
     const { searchParams } = new URL(req.url);

@@ -170,7 +170,7 @@ function ReportContent() {
         <div className="grid grid-cols-3 items-center gap-4 mb-8">
           <div className="flex justify-start">
             <div className="w-28 h-14 sm:w-32 sm:h-16 flex items-center justify-start">
-              <img src="/cluso-infolink.png" alt="Cluso Logo" className="object-contain max-h-full" />
+              <img src={settings?.logo || "/cluso-infolink.png"} alt="Logo" className="object-contain max-h-full" />
             </div>
           </div>
           <h1 className="text-center font-sans text-[#1B365D] text-2xl sm:text-3xl font-extrabold tracking-widest uppercase mt-2">REPORT</h1>
@@ -204,14 +204,13 @@ function ReportContent() {
             <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#1B365D] border-b border-slate-200 pb-1 mb-2">Candidate Details</h3>
             <div className="space-y-1.5 text-xs">
               <div><span className="text-slate-500 font-semibold">Name:</span> <span className="font-bold text-slate-800">{verification.name}</span></div>
-              <div><span className="text-slate-500 font-semibold">Email:</span> <span className="font-semibold text-slate-800">{maskEmail(verification.email)}</span></div>
-              <div><span className="text-slate-500 font-semibold">Phone:</span> <span className="font-semibold text-slate-800">{maskMobile(verification.phone)}</span></div>
+              <div><span className="text-slate-500 font-semibold">Email:</span> <span className="font-semibold text-slate-800">{verification.email}</span></div>
             </div>
           </div>
           <div>
             <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#1B365D] border-b border-slate-200 pb-1 mb-2">Company Details</h3>
             <div className="space-y-1.5 text-xs">
-              <div><span className="text-slate-500 font-semibold">Company:</span> <span className="font-bold text-slate-800">{verification.orgName}</span></div>
+              <div><span className="text-slate-500 font-semibold">Company:</span> <span className="font-bold text-slate-800">{verification.requestingOrgName || verification.orgName}</span></div>
               <div><span className="text-slate-500 font-semibold">Email:</span> <span className="font-semibold text-slate-800">{settings?.contactEmail || "contact@company.com"}</span></div>
             </div>
           </div>
@@ -259,7 +258,7 @@ function ReportContent() {
                 </tr>
                 <tr>
                   <td className="p-2.5 border-r border-slate-200 bg-slate-50/50">Email address</td>
-                  <td className="p-2.5">{maskEmail(verification.digilockerEmail || verification.email)}</td>
+                  <td className="p-2.5">{verification.digilockerEmail ? maskEmail(verification.digilockerEmail) : verification.email}</td>
                 </tr>
                 <tr>
                   <td className="p-2.5 border-r border-slate-200 bg-slate-50/50">Nationality</td>
@@ -391,7 +390,7 @@ function ReportContent() {
             This report is provided by CLUSO INFOLINK PRIVATE LIMITED on a strictly confidential basis, solely for the exclusive use of the recipient for legitimate corporate and business purposes. It may not be reproduced, redistributed, or disclosed, in whole or in part, in any manner whatsoever without prior written consent.
           </p>
           <p className="mb-2">
-            While CLUSO INFOLINK PRIVATE LIMITED endeavors to ensure the highest level of accuracy and diligence in procuring, collecting, and compiling this data, it does not warrant or guarantee the absolute completeness, correctness, or timeliness of the information contained herein. Consequently, CLUSO INFOLINK PRIVATE LIMITED shall not be held liable for any direct, indirect, or consequential loss, damage, or injury resulting from any errors, omissions, or negligence in the procurement or communication of this information. Reliance upon this report is strictly at the user's sole risk.
+            CLUSO INFOLINK PRIVATE LIMITED endeavors to ensure the highest level of accuracy and diligence in procuring, collecting, and compiling this data. Consequently, CLUSO INFOLINK PRIVATE LIMITED shall not be held liable for any direct, indirect, or consequential loss, damage, or injury resulting from any errors, omissions, or negligence in the procurement or communication of this information. Reliance upon this report is strictly at the user's sole risk.
           </p>
           <p className="mb-3">
             The recipient acknowledges that the handling and utilization of this data must strictly align with all prevailing Indian regulatory frameworks, including but not limited to the Digital Personal Data Protection Act, 2023 (DPDP Act) and the Information Technology Act, 2000, along with all subsequent amendments and rules.

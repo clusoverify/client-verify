@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     if (isErrorResponse(authResult)) return authResult;
     const { user } = authResult;
 
-    const roleError = requireRole(user, ["client"]);
+    const roleError = requireRole(user, ["client", "org_owner"]);
     if (roleError) return roleError;
 
     const orgName = getOrgName(user);
@@ -89,7 +89,13 @@ export async function GET(req: NextRequest) {
 
     const cleanVerifications = verifications.map(sanitizeVerification);
     const cleanInvoices = invoices.map(sanitizeInvoice);
-    const cleanVerifiers = verifiers.map(sanitizeVerifier);
+    const cleanVerifiers = verifiers.map(v => {
+      const clean = sanitizeVerifier(v);
+      return {
+        ...clean,
+        ratePerVerification: organisation ? (organisation.monthlyRate || 0) : (clean.ratePerVerification || 0)
+      };
+    });
 
     return NextResponse.json({
       settings: cleanSettings,
@@ -112,7 +118,7 @@ export async function POST(req: NextRequest) {
     if (isErrorResponse(authResult)) return authResult;
     const { user } = authResult;
 
-    const roleError = requireRole(user, ["client"]);
+    const roleError = requireRole(user, ["client", "org_owner"]);
     if (roleError) return roleError;
 
     const sessionOrgName = getOrgName(user);
@@ -130,13 +136,27 @@ export async function POST(req: NextRequest) {
 
     switch (action) {
       case "addVerification": {
-        const { id, name, email, orgName, date, status, verifier, notes } = payload;
+        const { name, email, orgName, requestingOrgName, date, status, verifier, notes } = payload;
 
         // Security: force orgName to the session user's org (prevent cross-tenant creation),
         // unless it's an administrator session (Cluso/Admin).
         const isAdminSession = sessionOrgName?.toLowerCase() === "cluso" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? orgName : (sessionOrgName || orgName);
         
+        const cleanOrg = safeOrgName.replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
+        
+        const nowTime = new Date();
+        const dd = String(nowTime.getDate()).padStart(2, "0");
+        const mm = String(nowTime.getMonth() + 1).padStart(2, "0");
+        const yy = String(nowTime.getFullYear()).slice(-2);
+        const dateStr = `${dd}${mm}${yy}`;
+        const prefix = `${cleanOrg}${dateStr}-`;
+        
+        const count = await db.collection("verifications").countDocuments({
+          id: { $regex: `^${prefix}` }
+        });
+        const finalId = `${prefix}${String(count + 1).padStart(4, "0")}`;
+
         const { randomBytes } = await import("crypto");
         const bcrypt = await import("bcryptjs");
 
@@ -166,23 +186,24 @@ export async function POST(req: NextRequest) {
             { $set: { password: hashedTempPassword, role: "candidate", fullName: name } }
           );
         }
-
+ 
         const initialAttempt = {
           date: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", hour12: true }).replace(/\u202f/g, " ").toLowerCase(),
           verifier: verifier || "Client Init",
           status: status || "Processing",
           notes: notes || "Verification request created by client."
         };
-
+ 
         // Build the direct login URL (with email and password query parameters)
         const candidatePortalUrl = process.env.CANDIDATE_PORTAL_URL || "https://candidate.verify.cluso.in";
         const setupUrl = `${candidatePortalUrl}/?email=${encodeURIComponent(email.toLowerCase().trim())}&password=${encodeURIComponent(tempPassword)}`;
-
+ 
         await db.collection("verifications").insertOne({
-          id,
+          id: finalId,
           name,
           email: email.toLowerCase().trim(),
           orgName: safeOrgName,
+          requestingOrgName: requestingOrgName || safeOrgName,
           date,
           status,
           verifier,
@@ -192,6 +213,15 @@ export async function POST(req: NextRequest) {
           attempts: [initialAttempt],
           setupUrl
         });
+ 
+        if (requestingOrgName && requestingOrgName.trim()) {
+          const trimmedOrg = requestingOrgName.trim();
+          await db.collection("settings").updateOne(
+            { companyName: safeOrgName },
+            { $addToSet: { recentRequestingOrgs: trimmedOrg } },
+            { upsert: true }
+          );
+        }
 
         await logAuditEvent(db, {
           actorUserId: user.id,
@@ -200,23 +230,31 @@ export async function POST(req: NextRequest) {
           portal: "client",
           action: "verification_created",
           targetType: "verification",
-          targetId: id,
+          targetId: finalId,
           ip,
           userAgent,
           outcome: "success"
         });
-
-        return NextResponse.json({ success: true, setupUrl });
+ 
+        return NextResponse.json({ success: true, id: finalId, setupUrl });
+      }
+      case "removeRecentRequestingOrg": {
+        const { requestingOrgName } = payload;
+        await db.collection("settings").updateOne(
+          { companyName: sessionOrgName },
+          { $pull: { recentRequestingOrgs: requestingOrgName } }
+        );
+        return NextResponse.json({ success: true });
       }
       case "updateSettings": {
-        const { companyName, address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin, gstin, invoiceEmail, billingSameAsCompany, billingAddress } = payload;
+        const { companyName, address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin, gstin, invoiceEmail, billingSameAsCompany, billingAddress, logo } = payload;
         // Security: always scope settings update to the session user's org
         await db.collection("settings").updateOne(
           { companyName: sessionOrgName },
           {
             $set: {
               companyName: sessionOrgName,
-              address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin, gstin, invoiceEmail, billingSameAsCompany, billingAddress
+              address, city, postalCode, contactFirstName, contactLastName, contactEmail, billingOption, cin, lut, tin, gstin, invoiceEmail, billingSameAsCompany, billingAddress, logo
             }
           },
           { upsert: true }
@@ -251,17 +289,18 @@ export async function POST(req: NextRequest) {
           isDeleted: { $ne: true }
         });
         const maxV = organisation?.maxVerifiers ?? 5;
-        const currentCount = await db.collection("verifiers").countDocuments({
+        const activeCount = await db.collection("verifiers").countDocuments({
           org: targetOrgName,
+          status: "Active",
           isDeleted: { $ne: true }
         });
 
-        if (currentCount >= maxV) {
-          return NextResponse.json({ error: `Cannot invite verifier. Limit of ${maxV} verifier accounts reached.` }, { status: 400 });
+        if (activeCount >= maxV) {
+          return NextResponse.json({ error: `Cannot invite verifier. Maximum active verifier limit of ${maxV} reached. Deactivate an existing verifier to free up a slot.` }, { status: 400 });
         }
 
         await db.collection("verifiers").insertOne({
-          id, name, email, org: targetOrgName, status, createdBy: user.email, ratePerVerification: 0
+          id, name, email, org: targetOrgName, status, createdBy: user.email, ratePerVerification: organisation?.monthlyRate || 0
         });
         
         if (password) {
@@ -292,6 +331,26 @@ export async function POST(req: NextRequest) {
           userAgent,
           outcome: "success"
         });
+        break;
+      }
+      case "updateVerifierStatus": {
+        if (user.role !== "org_owner") {
+          return NextResponse.json({ error: "Access denied. Only organisation owners can update verifier status." }, { status: 403 });
+        }
+        const { verifierId, status: newStatus } = payload;
+        // Security: only update verifiers belonging to this org
+        const verifierDoc = await db.collection("verifiers").findOne({ id: verifierId, org: sessionOrgName, isDeleted: { $ne: true } });
+        if (!verifierDoc) {
+          return NextResponse.json({ error: "Verifier not found or does not belong to your organisation." }, { status: 404 });
+        }
+        // Prevent deactivating yourself (the owner)
+        if (verifierDoc.isOwner && newStatus === "Inactive") {
+          return NextResponse.json({ error: "Cannot deactivate the organisation owner account." }, { status: 400 });
+        }
+        await db.collection("verifiers").updateOne(
+          { id: verifierId },
+          { $set: { status: newStatus } }
+        );
         break;
       }
       case "updateInvoiceStatus": {
@@ -332,7 +391,7 @@ export async function POST(req: NextRequest) {
         break;
       }
       case "submitPaymentProof": {
-        const { id, _id, paymentProof, paymentProofDate, clientNote } = payload;
+        const { id, _id, paymentProof, paymentProofDate, clientNote, activityLog } = payload;
         // Security: only update invoice if it belongs to this org
         const query: any = { orgName: sessionOrgName };
         if (_id) {
@@ -346,9 +405,21 @@ export async function POST(req: NextRequest) {
           console.warn(`[AUTH] Client ${user.email} attempted to submit proof for invoice ${id || _id} not belonging to org ${sessionOrgName}`);
           return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
         }
+
+        const updateDoc: any = {
+          status: "Pending",
+          paymentProof,
+          paymentProofDate,
+          clientNote: clientNote || "",
+          rejectionReason: ""
+        };
+        if (activityLog) {
+          updateDoc.activityLog = activityLog;
+        }
+
         await db.collection("invoices").updateOne(
           { _id: existingInvoice._id },
-          { $set: { status: "Pending", paymentProof, paymentProofDate, clientNote: clientNote || "", rejectionReason: "" } }
+          { $set: updateDoc }
         );
         await logAuditEvent(db, {
           actorUserId: user.id,
@@ -365,10 +436,10 @@ export async function POST(req: NextRequest) {
         break;
       }
       case "addInvoice": {
-        const { id, orgName, date, dueDate, amount, status, generationType } = payload;
+        const { id, orgName, date, dueDate, amount, status, generationType, activityLog } = payload;
         // Security: force orgName to session org
         await db.collection("invoices").insertOne({
-          id, orgName: sessionOrgName || orgName, date, dueDate, amount, status, generationType: generationType || "Manual"
+          id, orgName: sessionOrgName || orgName, date, dueDate, amount, status, generationType: generationType || "Manual", activityLog: activityLog || []
         });
         await logAuditEvent(db, {
           actorUserId: user.id,

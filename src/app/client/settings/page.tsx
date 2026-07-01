@@ -13,7 +13,9 @@ import {
   Sparkles,
   Save,
   RotateCcw,
-  FileText
+  FileText,
+  UploadCloud,
+  Trash2
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -24,6 +26,7 @@ export default function SettingsPage() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [logo, setLogo] = useState("");
 
   // Contact states
   const [contactFirstName, setContactFirstName] = useState("");
@@ -53,8 +56,6 @@ export default function SettingsPage() {
   const [passwordAlert, setPasswordAlert] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-
-
   // Load context settings into local state
   useEffect(() => {
     if (settings) {
@@ -62,6 +63,7 @@ export default function SettingsPage() {
       setAddress(settings.address || "");
       setCity(settings.city || "");
       setPostalCode(settings.postalCode || "");
+      setLogo(settings.logo || "");
       setContactFirstName(settings.contactFirstName || "");
       setContactLastName(settings.contactLastName || "");
       setContactEmail(settings.contactEmail || "");
@@ -75,6 +77,25 @@ export default function SettingsPage() {
       setBillingOption(settings.billingOption || "invoice");
     }
   }, [settings]);
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size limit: 200KB = 204800 bytes
+    if (file.size > 204800) {
+      setSaveError("Logo image size must be under 200KB.");
+      e.target.value = ""; // Reset file input
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setLogo(reader.result as string);
+      setSaveError("");
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSaveAll = () => {
     setSaveAlert("");
@@ -108,6 +129,7 @@ export default function SettingsPage() {
       invoiceEmail,
       billingSameAsCompany,
       billingAddress,
+      logo,
     });
     setSaveAlert("All profile settings updated successfully!");
     setTimeout(() => setSaveAlert(""), 3000);
@@ -130,6 +152,7 @@ export default function SettingsPage() {
       setInvoiceEmail(settings.invoiceEmail || "");
       setBillingSameAsCompany(settings.billingSameAsCompany !== undefined ? settings.billingSameAsCompany : true);
       setBillingAddress(settings.billingAddress || "");
+      setLogo(settings.logo || "");
       setBillingOption(settings.billingOption || "invoice");
       
       setSaveAlert("Changes discarded. Reloaded saved configuration.");
@@ -222,6 +245,54 @@ export default function SettingsPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+              {/* Company Logo Upload Section */}
+              <div className="flex flex-col gap-2 md:col-span-2 border-b border-dashed border-[#C6E7FF]/60 pb-6 mb-2">
+                <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Company Logo</label>
+                <div className="flex flex-col sm:flex-row items-center gap-6 mt-1">
+                  {/* Logo Preview box */}
+                  <div className="w-28 h-28 border border-[#C6E7FF] rounded-2xl bg-[#F8FAFC] flex items-center justify-center overflow-hidden shrink-0 relative group">
+                    {logo ? (
+                      <img src={logo} alt="Company Logo Preview" className="object-contain w-full h-full p-2" />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center text-slate-450 p-2 text-center">
+                        <Building className="w-8 h-8 opacity-40 mb-1" />
+                        <span className="text-[10px] font-bold">No Logo</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions / Info */}
+                  <div className="flex-1 flex flex-col gap-2 text-left w-full">
+                    <div className="flex flex-wrap gap-2">
+                      <label className="cursor-pointer bg-[#D4F6FF]/60 hover:bg-[#D4F6FF] border border-[#C6E7FF]/80 text-[#1E3A5F] font-bold text-xs px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs">
+                        <UploadCloud className="w-4 h-4" />
+                        <span>Upload Logo</span>
+                        <input
+                          type="file"
+                          accept="image/png, image/jpeg, image/jpg"
+                          onChange={handleLogoChange}
+                          className="hidden"
+                        />
+                      </label>
+                      
+                      {logo && (
+                        <button
+                          type="button"
+                          onClick={() => setLogo("")}
+                          className="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 font-bold text-xs px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          <span>Remove</span>
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed mt-1">
+                      Supports PNG, JPG, or JPEG. Maximum file size <strong className="text-slate-700">200KB</strong>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider">Company Name</label>
                 <input

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePortal, Verification, Invoice } from "src/context/PortalContext";
+import { usePortal, Verification, Invoice, InvoiceActivity } from "src/context/PortalContext";
 import { 
   Filter, 
   ChevronLeft, 
@@ -24,6 +24,8 @@ import {
   ArrowRight,
   X,
   ShieldAlert,
+  Calendar,
+  RotateCw,
   Search,
   CheckCircle2,
   Building,
@@ -32,12 +34,33 @@ import {
 } from "lucide-react";
 
 export default function OrderSummaryPage() {
-  const { verifications, invoices, settings, organisation, submitPaymentProof, fetchVerificationDetail } = usePortal();
+  const { verifications, invoices, settings, organisation, submitPaymentProof, fetchVerificationDetail, refreshData } = usePortal();
 
   const [activeInvoice, setActiveInvoice] = useState<Invoice | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"wire" | "paypal">("wire");
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [modalClosing, setModalClosing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refreshData();
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const handleCloseInvoiceModal = () => {
+    setModalClosing(true);
+    setTimeout(() => {
+      setActiveInvoice(null);
+      setModalClosing(false);
+    }, 600);
+  };
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [proofFile, setProofFile] = useState<string | null>(null);
   const [proofFileName, setProofFileName] = useState<string>("");
@@ -251,11 +274,22 @@ export default function OrderSummaryPage() {
     );
   };
 
-  // Filter verifications for the current company
+  // Filter verifications for the current company and sort by submission date/completion date descending (newest first)
   const clientCompany = settings.companyName || "";
-  const clientVerifications = verifications.filter(
-    (v) => v.orgName.toLowerCase() === clientCompany.toLowerCase()
-  );
+  const clientVerifications = verifications
+    .filter((v) => v.orgName.toLowerCase() === clientCompany.toLowerCase())
+    .sort((a, b) => {
+      try {
+        const timeA = new Date(a.date).getTime();
+        const timeB = new Date(b.date).getTime();
+        if (!isNaN(timeA) && !isNaN(timeB)) {
+          return timeB - timeA;
+        }
+        return 0;
+      } catch {
+        return 0;
+      }
+    });
 
   // Filter invoices for the current company
   const clientInvoices = invoices.filter(
@@ -267,39 +301,58 @@ export default function OrderSummaryPage() {
     .filter((inv) => inv.status === "Unpaid" || inv.status === "Overdue")
     .reduce((sum, inv) => sum + inv.amount, 0);
 
-  // Real-time: count completed verifications for the current month
-  const now = new Date();
-  const currentMonthName = now.toLocaleDateString("en-US", { month: "long" });
-  const currentYear = now.getFullYear();
-
-  // Only count live verifications if NO invoice exists for the current month
-  // (if an invoice exists, those verifications are already captured in its amount)
-  const hasCurrentMonthInvoice = clientInvoices.some(
-    (inv) => inv.month?.toLowerCase() === currentMonthName.toLowerCase() && inv.year === currentYear
-  );
-
-  const currentMonthCompleted = hasCurrentMonthInvoice ? 0 : clientVerifications.filter((v) => {
-    if (v.status !== "Completed") return false;
-    try {
-      const d = new Date(v.completedAt || v.date);
-      if (isNaN(d.getTime())) return false;
-      return d.getMonth() === now.getMonth() && d.getFullYear() === currentYear;
-    } catch {
-      return false;
-    }
-  }).length;
+  // Real-time: count all COMPLETED verifications that have NOT been invoiced yet
+  const totalCompletedCount = clientVerifications.filter((v) => v.status === "Completed").length;
   const perVerificationRate = organisation?.monthlyRate || 0;
+
+  // Calculate total invoiced amount
+  const totalInvoicedAmount = clientInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+  
+  // Estimate total invoiced verifications count based on invoice amounts
+  const totalInvoicedCount = perVerificationRate > 0 ? Math.round(totalInvoicedAmount / perVerificationRate) : 0;
+  
+  // Uninvoiced completed verifications count
+  const currentMonthCompleted = Math.max(0, totalCompletedCount - totalInvoicedCount);
   const currentMonthRunningTotal = currentMonthCompleted * perVerificationRate;
 
   // UI state for filter modal, active report modal, billing history modal, and report toast
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [monthFilter, setMonthFilter] = useState<string>(() => {
+    return new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  });
+  const [monthDropdownOpen, setMonthDropdownOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedVerification, setSelectedVerification] = useState<Verification | null>(null);
   const [selectedDetail, setSelectedDetail] = useState<Verification | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [billingHistoryOpen, setBillingHistoryOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const [copiedUrl, setCopiedUrl] = useState(false);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, monthFilter]);
+
+  // Dynamically extract month-year options from verifications
+  const monthOptions = Array.from(
+    new Set(
+      clientVerifications
+        .map((v) => {
+          try {
+            const d = new Date(v.completedAt || v.date);
+            if (isNaN(d.getTime())) return null;
+            return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean)
+    )
+  ) as string[];
+
+  // Sort month options chronologically descending
+  monthOptions.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
   const handleViewReport = async (v: Verification) => {
     setSelectedVerification(v);
@@ -323,9 +376,29 @@ export default function OrderSummaryPage() {
   };
 
   const filteredVerifications = clientVerifications.filter((v) => {
-    if (statusFilter === "all") return true;
-    return v.status.toLowerCase() === statusFilter.toLowerCase();
+    const matchesStatus = statusFilter === "all" || v.status.toLowerCase() === statusFilter.toLowerCase();
+    
+    let matchesMonth = true;
+    if (monthFilter !== "all") {
+      try {
+        const d = new Date(v.completedAt || v.date);
+        if (isNaN(d.getTime())) {
+          matchesMonth = false;
+        } else {
+          const vMonthStr = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+          matchesMonth = vMonthStr === monthFilter;
+        }
+      } catch {
+        matchesMonth = false;
+      }
+    }
+    
+    return matchesStatus && matchesMonth;
   });
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(filteredVerifications.length / itemsPerPage) || 1;
+  const paginatedVerifications = filteredVerifications.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <>
@@ -355,35 +428,97 @@ export default function OrderSummaryPage() {
           <div className="absolute top-0 left-0 right-0 h-1 bg-[#C6E7FF]"></div>
           <div className="flex justify-between items-center mb-1 relative">
             <h3 className="font-semibold text-lg text-[#0F172A]">Request Summary</h3>
-            <div className="relative">
+            <div className="flex gap-2 relative">
+              {/* Small Refresh Button */}
               <button
-                onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
-                className="font-bold text-xs text-[#0F172A] bg-white hover:bg-[#D4F6FF]/35 px-4 py-2.5 rounded-xl transition-all border border-[#C6E7FF] flex items-center gap-2 cursor-pointer shadow-2xs"
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                title="Refresh requests"
+                className="p-2.5 rounded-xl transition-all border border-[#C6E7FF] bg-white hover:bg-[#D4F6FF]/35 flex items-center justify-center cursor-pointer shadow-2xs text-[#1E3A5F] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Filter className="w-4 h-4 text-[#1E3A5F]" />
-                <span>Filter: {statusFilter.toUpperCase()}</span>
+                <RotateCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
               </button>
 
-              {filterDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#C6E7FF] rounded-xl shadow-lg z-30 overflow-hidden animate-fade-in">
-                  <div className="p-1 flex flex-col gap-1 font-body-sm">
-                    {["all", "Completed", "Processing", "Needs Attention"].map((status) => (
+              {/* Month Filter Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setMonthDropdownOpen(!monthDropdownOpen);
+                    setFilterDropdownOpen(false);
+                  }}
+                  className="font-bold text-xs text-[#0F172A] bg-white hover:bg-[#D4F6FF]/35 px-4 py-2.5 rounded-xl transition-all border border-[#C6E7FF] flex items-center gap-2 cursor-pointer shadow-2xs"
+                >
+                  <Calendar className="w-4 h-4 text-[#1E3A5F]" />
+                  <span>Month: {monthFilter === "all" ? "ALL" : monthFilter}</span>
+                </button>
+
+                {monthDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-[#C6E7FF] rounded-xl shadow-lg z-30 overflow-hidden animate-fade-in">
+                    <div className="p-1 flex flex-col gap-1 font-body-sm max-h-60 overflow-y-auto">
                       <button
-                        key={status}
                         onClick={() => {
-                          setStatusFilter(status);
-                          setFilterDropdownOpen(false);
+                          setMonthFilter("all");
+                          setMonthDropdownOpen(false);
                         }}
                         className={`text-left px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer font-semibold ${
-                          statusFilter === status ? "bg-[#C6E7FF] text-[#0F172A]" : "text-[#475569] hover:bg-[#D4F6FF]/30 hover:text-[#0F172A]"
+                          monthFilter === "all" ? "bg-[#C6E7FF] text-[#0F172A]" : "text-[#475569] hover:bg-[#D4F6FF]/30 hover:text-[#0F172A]"
                         }`}
                       >
-                        {status.toUpperCase()}
+                        ALL MONTHS
                       </button>
-                    ))}
+                      {monthOptions.map((m) => (
+                        <button
+                          key={m}
+                          onClick={() => {
+                            setMonthFilter(m);
+                            setMonthDropdownOpen(false);
+                          }}
+                          className={`text-left px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer font-semibold ${
+                            monthFilter === m ? "bg-[#C6E7FF] text-[#0F172A]" : "text-[#475569] hover:bg-[#D4F6FF]/30 hover:text-[#0F172A]"
+                          }`}
+                        >
+                          {m.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+
+              {/* Status Filter Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setFilterDropdownOpen(!filterDropdownOpen);
+                    setMonthDropdownOpen(false);
+                  }}
+                  className="font-bold text-xs text-[#0F172A] bg-white hover:bg-[#D4F6FF]/35 px-4 py-2.5 rounded-xl transition-all border border-[#C6E7FF] flex items-center gap-2 cursor-pointer shadow-2xs"
+                >
+                  <Filter className="w-4 h-4 text-[#1E3A5F]" />
+                  <span>Filter: {statusFilter.toUpperCase()}</span>
+                </button>
+
+                {filterDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-[#C6E7FF] rounded-xl shadow-lg z-30 overflow-hidden animate-fade-in">
+                    <div className="p-1 flex flex-col gap-1 font-body-sm">
+                      {["all", "Completed", "Processing", "Needs Attention"].map((status) => (
+                        <button
+                          key={status}
+                          onClick={() => {
+                            setStatusFilter(status);
+                            setFilterDropdownOpen(false);
+                          }}
+                          className={`text-left px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer font-semibold ${
+                            statusFilter === status ? "bg-[#C6E7FF] text-[#0F172A]" : "text-[#475569] hover:bg-[#D4F6FF]/30 hover:text-[#0F172A]"
+                          }`}
+                        >
+                          {status.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -406,7 +541,7 @@ export default function OrderSummaryPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredVerifications.map((v) => (
+                  paginatedVerifications.map((v) => (
                     <tr key={v.id} className="hover:bg-[#D4F6FF]/15 transition-colors group">
                       <td className="py-3.5 px-4 font-semibold text-[#0F172A] text-xs">{v.id}</td>
                       <td className="py-3.5 px-4 text-[#0F172A] text-xs">
@@ -465,13 +600,21 @@ export default function OrderSummaryPage() {
           
           <div className="mt-2 pt-4 border-t border-[#D4F6FF]/60 flex justify-between items-center text-xs">
             <span className="text-[#475569] font-medium">
-              Showing {filteredVerifications.length} of {clientVerifications.length} requests
+              Showing {paginatedVerifications.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-{Math.min(currentPage * itemsPerPage, filteredVerifications.length)} of {filteredVerifications.length} requests
             </span>
             <div className="flex gap-2">
-              <button className="p-1.5 rounded-lg text-secondary hover:bg-[#D4F6FF]/30 disabled:opacity-50 transition-colors" disabled>
+              <button 
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg text-[#0F172A] hover:bg-[#D4F6FF]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button className="p-1.5 rounded-lg text-secondary hover:bg-[#D4F6FF]/30 disabled:opacity-50 transition-colors" disabled>
+              <button 
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg text-[#0F172A] hover:bg-[#D4F6FF]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -499,7 +642,7 @@ export default function OrderSummaryPage() {
             {currentMonthCompleted > 0 && (
               <div className="relative z-10 mt-1 p-3 bg-[#D4F6FF]/25 border border-[#C6E7FF]/50 rounded-xl">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="font-label-caps text-[10px] text-[#475569] font-bold tracking-wider uppercase">{currentMonthName} {currentYear}</span>
+                  <span className="font-label-caps text-[10px] text-[#475569] font-bold tracking-wider uppercase">Uninvoiced Charges</span>
                   <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#C6E7FF]/40 text-[#0F172A] border border-[#C6E7FF] uppercase">Live</span>
                 </div>
                 <div className="flex justify-between items-baseline">
@@ -551,13 +694,7 @@ export default function OrderSummaryPage() {
               )}
             </div>
 
-            <button
-              onClick={() => setBillingHistoryOpen(true)}
-              className="mt-2 w-full py-2.5 bg-[#FBFBFB] hover:bg-[#D4F6FF]/35 text-[#0F172A] font-bold text-xs rounded-xl border border-[#C6E7FF] transition-all relative z-10 flex justify-center items-center gap-2 cursor-pointer shadow-2xs"
-            >
-              <span>View Billing History</span>
-              <ArrowRight className="w-4 h-4 text-[#0F172A]" />
-            </button>
+
           </section>
         </div>
       </div>
@@ -935,17 +1072,23 @@ export default function OrderSummaryPage() {
           <div className="bg-white border border-[#C6E7FF] rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative my-auto animate-fade-in">
             <button
               onClick={() => {
-                if (!paymentProcessing && !paymentSuccess) {
-                  setActiveInvoice(null);
+                if (!paymentProcessing && !paymentSuccess && !modalClosing) {
+                  handleCloseInvoiceModal();
                 }
               }}
-              disabled={paymentProcessing || paymentSuccess}
-              className="absolute right-4 top-4 p-2 hover:bg-[#D4F6FF]/40 rounded-xl text-[#0F172A] disabled:opacity-50 cursor-pointer"
+              disabled={paymentProcessing || paymentSuccess || modalClosing}
+              className="absolute right-4 top-4 p-2 hover:bg-[#D4F6FF]/40 rounded-xl text-[#0F172A] disabled:opacity-50 cursor-pointer border-none bg-transparent"
             >
               <X className="w-5 h-5" />
             </button>
  
-            {paymentSuccess ? (
+            {modalClosing ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in min-h-[300px]">
+                <div className="w-10 h-10 border-4 border-[#1E3A5F] border-t-transparent rounded-full animate-spin mb-4"></div>
+                <h3 className="font-semibold text-sm text-[#0F172A]">Closing Invoice Details...</h3>
+                <p className="text-secondary text-[10px] mt-1 text-slate-500 font-medium">Please wait a moment</p>
+              </div>
+            ) : paymentSuccess ? (
               <div className="flex flex-col items-center justify-center py-8 text-center animate-fade-in">
                 <div className="w-16 h-16 bg-[#E6F8F3] border border-[#A3EAD6] rounded-full flex items-center justify-center text-[#00684A] mb-4 animate-bounce-subtle">
                   <CheckCircle className="w-8 h-8 text-[#00a877]" />
@@ -1026,7 +1169,137 @@ export default function OrderSummaryPage() {
                   <Download className="w-4 h-4 text-[#0F172A]" />
                   <span>Download Billable Requests Summary</span>
                 </button>
- 
+
+                {/* Invoice Activity Timeline */}
+                {(() => {
+                  const base: InvoiceActivity[] = [...(activeInvoice.activityLog || [])];
+                  if (base.length === 0) {
+                    base.push({
+                      id: `fallback-gen`,
+                      type: "generated",
+                      timestamp: activeInvoice.date ? new Date(activeInvoice.date).toISOString() : new Date().toISOString(),
+                      actor: "System",
+                      note: "Invoice generated"
+                    });
+                    if (activeInvoice.paymentProofDate) {
+                      base.push({
+                        id: `fallback-sub`,
+                        type: "submitted",
+                        timestamp: activeInvoice.paymentProofDate,
+                        actor: activeInvoice.orgName || "Client",
+                        note: activeInvoice.clientNote || "",
+                        paymentProof: activeInvoice.paymentProof
+                      });
+                    }
+                    if (activeInvoice.status === "Paid") {
+                      base.push({
+                        id: `fallback-app`,
+                        type: "approved",
+                        timestamp: activeInvoice.approvedDate || new Date().toISOString(),
+                        actor: activeInvoice.approvedBy || "Admin",
+                        note: activeInvoice.adminNote || "Payment approved by administrator"
+                      });
+                    } else if (activeInvoice.status === "Unpaid" && activeInvoice.rejectionReason) {
+                      base.push({
+                        id: `fallback-rej`,
+                        type: "rejected",
+                        timestamp: activeInvoice.rejectedDate || new Date().toISOString(),
+                        actor: activeInvoice.rejectedBy || "Administrator",
+                        note: activeInvoice.rejectionReason
+                      });
+                    }
+                  }
+                  const sorted = base.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+                  return (
+                    <div className="mt-4 p-4 bg-white border border-[#D4F6FF]/60 rounded-2xl text-left flex flex-col gap-3">
+                      <span className="font-label-caps text-[#475569] text-[10px] font-bold tracking-wider uppercase block border-b border-[#D4F6FF]/30 pb-2 mb-1 flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[16px] text-slate-400">history</span>
+                        <span>Invoice Activity History</span>
+                      </span>
+
+                      <div className="relative border-l border-[#D4F6FF] pl-5 ml-2.5 flex flex-col gap-4">
+                        {sorted.map((act, index) => {
+                          let icon = (
+                            <div className="absolute -left-[27px] top-0.5 w-3.5 h-3.5 rounded-full bg-sky-500 border-2 border-white flex items-center justify-center shadow-xs">
+                              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                            </div>
+                          );
+                          let title = "";
+                          let content = null;
+
+                          if (act.type === "generated") {
+                            title = "Invoice Generated";
+                            content = (
+                              <p className="text-[10px] text-slate-500 mt-0.5 font-medium">
+                                Generated on {new Date(act.timestamp).toLocaleString()}
+                              </p>
+                            );
+                          } else if (act.type === "submitted") {
+                            icon = (
+                              <div className="absolute -left-[27px] top-0.5 w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-white flex items-center justify-center shadow-xs" />
+                            );
+                            title = "Payment Proof Submitted";
+                            content = (
+                              <div className="flex flex-col gap-1 mt-0.5 text-[10px] text-slate-500 font-medium">
+                                <p>Submitted on {new Date(act.timestamp).toLocaleString()}</p>
+                                {act.note && (
+                                  <p className="text-[11px] italic text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 max-w-sm mt-1">
+                                    "{act.note}"
+                                  </p>
+                                )}
+                              </div>
+                            );
+                          } else if (act.type === "approved") {
+                            icon = (
+                              <div className="absolute -left-[27px] top-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow-xs" />
+                            );
+                            title = "Payment Approved & Cleared";
+                            content = (
+                              <p className="text-[10px] text-slate-500 mt-0.5 font-medium">
+                                Approved by {act.actor} on {new Date(act.timestamp).toLocaleString()}
+                              </p>
+                            );
+                          } else if (act.type === "rejected") {
+                            icon = (
+                              <div className="absolute -left-[27px] top-0.5 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-white flex items-center justify-center shadow-xs" />
+                            );
+                            title = "Payment Disapproved / Rejected";
+                            content = (
+                              <div className="flex flex-col gap-1 mt-0.5 text-[10px] text-slate-500 font-medium">
+                                <p>Rejected by {act.actor} on {new Date(act.timestamp).toLocaleString()}</p>
+                                {act.note && (
+                                  <div className="bg-rose-50 border border-rose-100 rounded-lg p-2 max-w-sm mt-1">
+                                    <span className="text-[9px] font-bold text-rose-500 block mb-0.5">REJECTION REASON</span>
+                                    <p className="text-xs text-rose-700 italic">"{act.note}"</p>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          } else if (act.type === "status_change") {
+                            title = `Status Changed to ${act.status}`;
+                            content = (
+                              <p className="text-[10px] text-slate-500 mt-0.5 font-medium">
+                                Changed on {new Date(act.timestamp).toLocaleString()}
+                              </p>
+                            );
+                          }
+
+                          return (
+                            <div key={act.id || index} className="relative">
+                              {icon}
+                              <div className="text-left">
+                                <p className="text-xs font-bold text-slate-800">{title}</p>
+                                {content}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Unpaid / Overdue workflow: show payment transfer options and upload form */}
                 {(activeInvoice.status === "Unpaid" || activeInvoice.status === "Overdue") && (
                   <>
@@ -1217,7 +1490,7 @@ export default function OrderSummaryPage() {
                           {/* Optional Client Note input (only shown once proofFile is uploaded) */}
                           {proofFile && (
                             <div className="flex flex-col gap-1.5 mt-2 animate-fade-in text-left">
-                              <span className="text-[#475569] font-label-caps text-[9px] font-bold tracking-wider block">ADD A NOTE FOR OUR ADMINISTRATOR (OPTIONAL)</span>
+                              <span className="text-[#475569] font-label-caps text-[9px] font-bold tracking-wider block">ADD A NOTE FOR OUR ADMINISTRATOR</span>
                               <textarea
                                 value={clientNote}
                                 onChange={(e) => setClientNote(e.target.value)}
@@ -1235,7 +1508,7 @@ export default function OrderSummaryPage() {
                     <div className="mt-4 flex justify-end gap-3 border-t border-[#D4F6FF]/60 pt-4">
                       <button
                         type="button"
-                        onClick={() => setActiveInvoice(null)}
+                        onClick={handleCloseInvoiceModal}
                         disabled={paymentProcessing}
                         className="px-5 py-2.5 border border-[#D4F6FF] hover:bg-[#FBFBFB] rounded-xl font-semibold text-[#334155] cursor-pointer text-xs disabled:opacity-50 bg-white"
                       >
@@ -1284,7 +1557,7 @@ export default function OrderSummaryPage() {
                     <div className="mt-2 flex justify-end">
                       <button
                         type="button"
-                        onClick={() => setActiveInvoice(null)}
+                        onClick={handleCloseInvoiceModal}
                         className="px-5 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-white rounded-xl font-semibold text-xs cursor-pointer border-none"
                       >
                         Close
@@ -1306,7 +1579,7 @@ export default function OrderSummaryPage() {
                     <div className="mt-2 flex justify-end">
                       <button
                         type="button"
-                        onClick={() => setActiveInvoice(null)}
+                        onClick={handleCloseInvoiceModal}
                         className="px-5 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-white rounded-xl font-semibold text-xs cursor-pointer border-none"
                       >
                         Close

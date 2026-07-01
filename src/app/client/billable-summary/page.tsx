@@ -6,7 +6,7 @@ import { usePortal } from "src/context/PortalContext";
 
 function BillableSummaryContent() {
   const searchParams = useSearchParams();
-  const { settings, verifications, organisation, clusoSettings } = usePortal();
+  const { settings, verifications, organisation, clusoSettings, invoices } = usePortal();
   const [loaded, setLoaded] = useState(false);
 
   // Determine billing month and year
@@ -14,6 +14,15 @@ function BillableSummaryContent() {
   const monthName = searchParams.get("month") || now.toLocaleDateString("en-US", { month: "long" });
   const yearStr = searchParams.get("year") || String(now.getFullYear());
   const year = parseInt(yearStr);
+
+  const clientCompany = settings?.companyName || "";
+
+  const matchingInvoice = invoices.find(
+    (inv) =>
+      inv.month?.toLowerCase() === monthName.toLowerCase() &&
+      inv.year === year &&
+      (inv.organisationId === organisation?.id || inv.orgName.toLowerCase() === clientCompany.toLowerCase())
+  );
 
   // Month index mapping
   const monthsList = [
@@ -30,7 +39,6 @@ function BillableSummaryContent() {
   const endDateStr = `${daysInMonth} ${monthShort} ${year}`;
 
   // Filter completed verifications for the selected month/year
-  const clientCompany = settings?.companyName || "";
   const filteredVerifications = verifications.filter((v) => {
     if (v.status !== "Completed") return false;
     if (v.orgName.toLowerCase() !== clientCompany.toLowerCase()) return false;
@@ -88,6 +96,9 @@ function BillableSummaryContent() {
               <p>Billing Month: <span className="text-[#0F172A] font-bold">{monthName} {year}</span></p>
               <p>Billing Period: <span className="text-[#0F172A] font-bold">{startDateStr} to {endDateStr}</span></p>
               <p>Total Billable Requests: <span className="text-[#0F172A] font-bold">{filteredVerifications.length}</span></p>
+              {matchingInvoice && (
+                <p>Invoice Number: <span className="text-[#0F172A] font-bold font-mono">{matchingInvoice.id}</span></p>
+              )}
             </div>
           </div>
           
@@ -206,8 +217,8 @@ function BillableSummaryContent() {
                 <th className="py-2 px-2 whitespace-nowrap">Sr No.</th>
                 <th className="py-2 px-2 whitespace-nowrap">Requested Date</th>
                 <th className="py-2 px-2">Name of Candidate</th>
-                <th className="py-2 px-2">User Name</th>
-                <th className="py-2 px-2">Verifier Name</th>
+                <th className="py-2 px-2">Contact Person Name</th>
+                <th className="py-2 px-2">Requesting Organisation</th>
                 <th className="py-2 px-2 whitespace-nowrap">Status</th>
                 <th className="py-2 px-2">Service</th>
                 <th className="py-2 px-2">Verification Origin</th>
@@ -242,8 +253,8 @@ function BillableSummaryContent() {
                       <td className="py-2 px-2 font-semibold text-slate-900 whitespace-nowrap">{idx + 1}</td>
                       <td className="py-2 px-2 whitespace-nowrap">{formattedDate}</td>
                       <td className="py-2 px-2 font-bold text-slate-900">{v.name}</td>
-                      <td className="py-2 px-2">{settings.companyName || "Custent"}</td>
-                      <td className="py-2 px-2">{v.verifier || "Prabir Kumar"}</td>
+                      <td className="py-2 px-2">{settings.contactFirstName ? `${settings.contactFirstName} ${settings.contactLastName || ""}`.trim() : "Contact Person"}</td>
+                      <td className="py-2 px-2">{v.requestingOrgName || settings.companyName || v.orgName}</td>
                       <td className="py-2 px-2 font-bold text-emerald-700 whitespace-nowrap">Verified</td>
                       <td className="py-2 px-2">Identity Verification</td>
                       <td className="py-2 px-2">India</td>

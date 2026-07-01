@@ -16,7 +16,9 @@ import {
   User, 
   ArrowRight,
   Sparkles,
-  Users
+  Users,
+  History,
+  FileText
 } from "lucide-react";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -98,14 +100,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       icon: ShieldCheck,
     },
     {
-      name: "Settings & Profile",
-      path: "/client/settings",
-      icon: SettingsIcon,
-    },
-    {
       name: "Order Summary",
       path: "/client/summary",
-      icon: Receipt,
+      icon: FileText,
+    },
+    {
+      name: "Billable History",
+      path: "/client/billing",
+      icon: History,
     },
     ...(profile?.role === "org_owner"
       ? [
@@ -116,6 +118,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           }
         ]
       : []),
+    {
+      name: "Settings & Profile",
+      path: "/client/settings",
+      icon: SettingsIcon,
+    },
   ];
 
   const handleLogout = async () => {

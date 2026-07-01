@@ -10,19 +10,22 @@ import {
   Send, 
   Copy, 
   Check, 
-  ExternalLink,
-  Sparkles,
-  UserPlus
+  ExternalLink, 
+  Sparkles, 
+  UserPlus,
+  X
 } from "lucide-react";
 
 export default function IdentityVerification() {
   const router = useRouter();
   const { user, profile } = useAuth();
-  const { addVerification, settings } = usePortal();
-
+  const { addVerification, settings, removeRecentRequestingOrg } = usePortal();
+ 
   const [candidateName, setCandidateName] = useState("");
   const [candidateEmail, setCandidateEmail] = useState("");
   const [orgName, setOrgName] = useState("");
+  const [requestingOrgName, setRequestingOrgName] = useState("");
+  const [showOrgDropdown, setShowOrgDropdown] = useState(false);
   
   const isAdmin = profile?.role === "admin" || profile?.org_name?.toLowerCase() === "cluso" || profile?.org_name?.toLowerCase() === "admin";
 
@@ -40,6 +43,11 @@ export default function IdentityVerification() {
     setupUrl?: string;
   } | null>(null);
   const [copiedUrl, setCopiedUrl] = useState(false);
+
+  const recentOrgs = settings?.recentRequestingOrgs || [];
+  const filteredOrgs = recentOrgs.filter(org => 
+    org.toLowerCase().includes(requestingOrgName.toLowerCase())
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,12 +75,16 @@ export default function IdentityVerification() {
       return;
     }
     if (!orgName.trim()) {
+      setErrorMsg("Organisation Name is required");
+      return;
+    }
+    if (!requestingOrgName.trim()) {
       setErrorMsg("Requesting ORG Name is required");
       return;
     }
 
     try {
-      const res = await addVerification(candidateName, candidateEmail, orgName);
+      const res = await addVerification(candidateName, candidateEmail, orgName, requestingOrgName);
       if (res && res.success) {
         setSuccessMsg("Verification request initiated successfully!");
         setCreatedCredentials({
@@ -82,7 +94,7 @@ export default function IdentityVerification() {
         });
         setCandidateName("");
         setCandidateEmail("");
-        setOrgName(isAdmin ? "" : (profile?.org_name || ""));
+        setRequestingOrgName("");
       } else {
         setErrorMsg("Failed to initiate verification request");
       }
@@ -108,6 +120,7 @@ export default function IdentityVerification() {
     setCandidateName("");
     setCandidateEmail("");
     setOrgName(isAdmin ? "" : (profile?.org_name || ""));
+    setRequestingOrgName("");
   };
 
   const isSettingsIncomplete = !settings || 
@@ -218,22 +231,64 @@ export default function IdentityVerification() {
           </div>
 
           {/* Requesting ORG Name Field */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 relative">
             <label className="font-label-caps text-[#475569] text-xs font-semibold uppercase tracking-wider" htmlFor="org-name">
               {isAdmin ? "Target Client ORG Name" : "Requesting ORG Name"}
             </label>
-            <input
-              id="org-name"
-              type="text"
-              value={orgName}
-              onChange={(e) => setOrgName(e.target.value)}
-              autoComplete="off"
-              disabled={!isAdmin || isSettingsIncomplete}
-              className={`border border-[#C6E7FF] rounded-xl p-3.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all bg-[#FBFBFB]/50 placeholder-slate-400 font-semibold ${
-                (!isAdmin || isSettingsIncomplete) ? "bg-slate-100/60 text-slate-500 cursor-not-allowed border-slate-200" : ""
-              }`}
-              placeholder={isAdmin ? "Enter target client organization name (e.g., TCS)" : "Enter the organization name requiring the verification"}
-            />
+            <div className="relative">
+              <input
+                id="org-name"
+                type="text"
+                value={requestingOrgName}
+                onChange={(e) => {
+                  setRequestingOrgName(e.target.value);
+                  setShowOrgDropdown(true);
+                }}
+                onFocus={() => setShowOrgDropdown(true)}
+                onBlur={() => {
+                  setTimeout(() => setShowOrgDropdown(false), 200);
+                }}
+                autoComplete="off"
+                disabled={isSettingsIncomplete}
+                className={`w-full border border-[#C6E7FF] rounded-xl p-3.5 font-body-sm text-primary focus:outline-none focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0F172A] transition-all bg-[#FBFBFB]/50 placeholder-slate-400 font-semibold ${
+                  isSettingsIncomplete ? "bg-slate-100/60 text-slate-500 cursor-not-allowed border-slate-200 opacity-80" : ""
+                }`}
+                placeholder={isAdmin ? "Enter target client organization name (e.g., TCS)" : "Enter the organization name requiring the verification"}
+              />
+
+              {showOrgDropdown && filteredOrgs.length > 0 && (
+                <div className="absolute left-0 right-0 mt-1 bg-white border border-[#C6E7FF] rounded-xl shadow-lg z-30 overflow-hidden max-h-48 overflow-y-auto animate-fade-in">
+                  <div className="p-1 flex flex-col gap-1 font-body-sm">
+                    {filteredOrgs.map((org) => (
+                      <div
+                        key={org}
+                        className="flex items-center justify-between px-3 py-2 rounded-lg text-xs hover:bg-[#D4F6FF]/35 text-[#0F172A] font-semibold cursor-pointer group/item"
+                        onMouseDown={() => {
+                          // use onMouseDown instead of onClick to prevent onBlur from closing dropdown first
+                          setRequestingOrgName(org);
+                          setShowOrgDropdown(false);
+                        }}
+                      >
+                        <span className="flex-1 text-left">{org}</span>
+                        <button
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            // Assuming removeRecentRequestingOrg is passed or defined in scope
+                            if (typeof removeRecentRequestingOrg === 'function') removeRecentRequestingOrg(org);
+                          }}
+                          title="Remove from history"
+                          className="p-1 rounded-md text-slate-400 hover:bg-slate-100 hover:text-red-650 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Action Buttons */}

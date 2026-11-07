@@ -2,7 +2,7 @@
 
 > **Document Version**: 2.0.0  
 > **Target System**: Client Verify Portal (`client-verify`)  
-> **Base URL**: `https://verify.clusoinfolink.com` (Production) / `http://localhost:3000` (Local Development)  
+> **Base URL**: `https://verify.cluso.in` (Production) / `http://localhost:3000` (Local Development)  
 > **Security Protocol**: TLS 1.3 / HTTPS Mandatory  
 > **Auth Standard**: RFC 6750 Bearer Token with SHA-256 Key Hashing  
 
@@ -230,7 +230,7 @@ Every API invocation is metered and audited in the MongoDB collection `api_usage
     "success": true,
     "requestId": "ACM040926-0001",
     "status": "processing",
-    "candidateSetupUrl": "https://candidate.verify.clusoinfolink.com/?email=rahul.sharma%40example.com&password=Cluso%40...",
+    "candidateSetupUrl": "https://candidate.verify.cluso.in/?email=rahul.sharma%40example.com&password=Cluso%40...",
     "message": "Identity verification request created successfully."
   }
   ```
@@ -318,7 +318,7 @@ Every API invocation is metered and audited in the MongoDB collection `api_usage
     "success": true,
     "requestId": "DAV040926-0001",
     "status": "processing",
-    "candidateSetupUrl": "https://candidate.verify.clusoinfolink.com/?email=priya.s%40example.com...",
+    "candidateSetupUrl": "https://candidate.verify.cluso.in/?email=priya.s%40example.com...",
     "message": "Digital address verification created successfully."
   }
   ```
@@ -636,8 +636,8 @@ Every API invocation is metered and audited in the MongoDB collection `api_usage
       "digilockerPan": "XXXXX4829X",
       "hasPhoto": true
     },
-    "reportUrl": "https://verify.clusoinfolink.com/client/report/ACM040926-0001",
-    "pdfUrl": "https://verify.clusoinfolink.com/api/v1/external/report/ACM040926-0001/pdf"
+    "reportUrl": "https://verify.cluso.in/client/report/ACM040926-0001",
+    "pdfUrl": "https://verify.cluso.in/api/v1/external/report/ACM040926-0001/pdf"
   }
   ```
 
@@ -792,7 +792,7 @@ When created via the external API, verifications have `source: "api"` and standa
 ```typescript
 // cluso-infolink-client.ts
 const CLUSO_API_KEY = process.env.CLUSO_API_KEY || "sk_live_YOUR_KEY_HERE";
-const BASE_URL = "https://verify.clusoinfolink.com";
+const BASE_URL = "https://verify.cluso.in";
 
 async function verifyCandidate(candidate: {
   name: string;
@@ -846,7 +846,7 @@ import requests
 import time
 
 API_KEY = "sk_live_YOUR_KEY_HERE"
-BASE_URL = "https://verify.clusoinfolink.com"
+BASE_URL = "https://verify.cluso.in"
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
@@ -886,7 +886,7 @@ def verify_court_record(name: str, dob: str, address: dict):
 ### cURL Quick Verification Recipe
 ```bash
 # 1. Check Passport Status
-curl -X POST "https://verify.clusoinfolink.com/api/v1/external/verify/passport" \
+curl -X POST "https://verify.cluso.in/api/v1/external/verify/passport" \
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{
@@ -895,7 +895,7 @@ curl -X POST "https://verify.clusoinfolink.com/api/v1/external/verify/passport" 
   }'
 
 # 2. Check Interpol Red Notice
-curl -X POST "https://verify.clusoinfolink.com/api/v1/external/verify/interpol" \
+curl -X POST "https://verify.cluso.in/api/v1/external/verify/interpol" \
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \
   -H "Content-Type: application/json" \
   -d '{
@@ -904,7 +904,7 @@ curl -X POST "https://verify.clusoinfolink.com/api/v1/external/verify/interpol" 
   }'
 
 # 3. Download Report as PDF (HTML attachment)
-curl -X GET "https://verify.clusoinfolink.com/api/v1/external/report/ACM040926-0001/pdf" \
+curl -X GET "https://verify.cluso.in/api/v1/external/report/ACM040926-0001/pdf" \
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \
   -o "report-ACM040926-0001.html"
 ```

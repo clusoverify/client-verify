@@ -6,7 +6,7 @@ A direct, practical integration guide to connect Cluso Infolink Verify into your
 
 ## Step 1: Generate Your API Secret Key
 
-1. Log into your **Client Verify Portal** (`https://verify.clusoinfolink.com`).
+1. Log into your **Client Verify Portal** (`https://verify.cluso.in`).
 2. In the left navigation menu, click **API Connection** (or navigate to `/client/api-settings`).
 3. Click the green **"Generate New API Key"** button.
 4. A secure modal will appear displaying your secret key:
@@ -27,7 +27,7 @@ Authorization: Bearer sk_live_YOUR_SECRET_KEY
 Content-Type: application/json
 ```
 
-- **Production Base URL**: `https://verify.clusoinfolink.com`
+- **Production Base URL**: `https://verify.cluso.in`
 - **Local Dev Base URL**: `http://localhost:3000`
 
 ---
@@ -37,7 +37,7 @@ Content-Type: application/json
 Send candidate details via `POST` with a JSON payload. Select the check endpoint you need:
 
 ### A. Identity Verification (DigiLocker / Aadhaar)
-- **Endpoint**: `POST https://verify.clusoinfolink.com/api/v1/external/verify/identity`
+- **Endpoint**: `POST https://verify.cluso.in/api/v1/external/verify/identity`
 - **Request Body**:
   ```json
   {
@@ -52,7 +52,7 @@ Send candidate details via `POST` with a JSON payload. Select the check endpoint
     "success": true,
     "requestId": "ACM040926-0001",
     "status": "processing",
-    "candidateSetupUrl": "https://candidate.verify.clusoinfolink.com/?email=..."
+    "candidateSetupUrl": "https://candidate.verify.cluso.in/?email=..."
   }
   ```
   *(Deliver `candidateSetupUrl` to the user via SMS/email so they can complete Aadhaar authentication).*
@@ -60,7 +60,7 @@ Send candidate details via `POST` with a JSON payload. Select the check endpoint
 ---
 
 ### B. Court Record Check (Indian District & High Courts)
-- **Endpoint**: `POST https://verify.clusoinfolink.com/api/v1/external/verify/court-record`
+- **Endpoint**: `POST https://verify.cluso.in/api/v1/external/verify/court-record`
 - **Request Body**:
   ```json
   {
@@ -90,7 +90,7 @@ Send candidate details via `POST` with a JSON payload. Select the check endpoint
 ---
 
 ### C. Indian Passport Status Check (Instant Synchronous)
-- **Endpoint**: `POST https://verify.clusoinfolink.com/api/v1/external/verify/passport`
+- **Endpoint**: `POST https://verify.cluso.in/api/v1/external/verify/passport`
 - **Request Body**:
   ```json
   {
@@ -183,7 +183,7 @@ Send candidate details via `POST` with a JSON payload. Select the check endpoint
 
 While background searches process (usually 5 to 15 seconds), poll the status endpoint:
 
-- **Endpoint**: `GET https://verify.clusoinfolink.com/api/v1/external/status/{requestId}`
+- **Endpoint**: `GET https://verify.cluso.in/api/v1/external/status/{requestId}`
 - **Headers**: `Authorization: Bearer sk_live_YOUR_KEY`
 - **Response**:
   ```json
@@ -200,7 +200,7 @@ While background searches process (usually 5 to 15 seconds), poll the status end
 ## Step 5: Download the Final Report (GET — Always Free $0)
 
 ### Option 1: Full JSON Report Data
-- **Endpoint**: `GET https://verify.clusoinfolink.com/api/v1/external/report/{requestId}`
+- **Endpoint**: `GET https://verify.cluso.in/api/v1/external/report/{requestId}`
 - **Response**:
   ```json
   {
@@ -213,12 +213,12 @@ While background searches process (usually 5 to 15 seconds), poll the status end
       "digilockerAadhaar": "XXXXXXXX9481",
       "digilockerPan": "XXXXX4829X"
     },
-    "pdfUrl": "https://verify.clusoinfolink.com/api/v1/external/report/ACM040926-0001/pdf"
+    "pdfUrl": "https://verify.cluso.in/api/v1/external/report/ACM040926-0001/pdf"
   }
   ```
 
 ### Option 2: Print-Ready HTML / PDF Document
-- **Endpoint**: `GET https://verify.clusoinfolink.com/api/v1/external/report/{requestId}/pdf`
+- **Endpoint**: `GET https://verify.cluso.in/api/v1/external/report/{requestId}/pdf`
 - **Response**: Self-contained HTML report with `Content-Disposition: attachment`. Can be printed directly to PDF via `window.print()` or headless browser.
 
 ---
@@ -230,7 +230,7 @@ While background searches process (usually 5 to 15 seconds), poll the status end
 ```javascript
 // cluso-api.js
 const API_KEY = process.env.CLUSO_API_KEY; // "sk_live_..."
-const BASE_URL = "https://verify.clusoinfolink.com";
+const BASE_URL = "https://verify.cluso.in";
 
 // 1. Submit a verification request
 async function startVerification(endpoint, payload) {
@@ -295,7 +295,7 @@ import requests
 import time
 
 API_KEY = "sk_live_YOUR_KEY_HERE"
-BASE_URL = "https://verify.clusoinfolink.com"
+BASE_URL = "https://verify.cluso.in"
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"

@@ -35,6 +35,11 @@ export const CLOUDFLARE_CONFIG = new Proxy({} as ReturnType<typeof getCloudflare
  */
 export async function queryD1<T = any>(sql: string, params: any[] = []): Promise<T[]> {
   const { accountId, d1DatabaseId, apiToken } = getCloudflareConfig();
+  if (!accountId || !d1DatabaseId || !apiToken) {
+    throw new Error(
+      "Missing Cloudflare D1 environment variables. Please add CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID, and CLOUDFLARE_API_TOKEN in your Vercel Project Settings."
+    );
+  }
   const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${d1DatabaseId}/query`;
 
   const response = await fetch(url, {
@@ -65,6 +70,11 @@ export async function queryD1<T = any>(sql: string, params: any[] = []): Promise
  */
 export async function batchD1(statements: { sql: string; params?: any[] }[]): Promise<any> {
   const { accountId, d1DatabaseId, apiToken } = getCloudflareConfig();
+  if (!accountId || !d1DatabaseId || !apiToken) {
+    throw new Error(
+      "Missing Cloudflare D1 environment variables. Please add CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID, and CLOUDFLARE_API_TOKEN in your Vercel Project Settings."
+    );
+  }
   const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${d1DatabaseId}/query`;
 
   // D1 API accepts raw SQL containing multiple statements or individual execution

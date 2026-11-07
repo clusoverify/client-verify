@@ -47,10 +47,13 @@ export async function GET(
     verification.status === "Completed" ||
     verification.status === "Verified" ||
     verification.status === "Discrepancy" ||
+    verification.status === "Needs Attention" ||
     verification.courtRecordStatus === "completed" ||
     verification.safliiCourtStatus === "completed" ||
     verification.ukCourtStatus === "completed" ||
     verification.malaysiaCourtStatus === "completed" ||
+    verification.philippinesCourtStatus === "completed" ||
+    verification.singaporeCourtStatus === "completed" ||
     verification.sapsWantedStatus === "completed" ||
     verification.sapsWantedStatus === "cleared_by_attorney" ||
     verification.sapsWantedStatus === "confirmed_wanted" ||
@@ -75,12 +78,38 @@ export async function GET(
     cleanDoc._id = cleanDoc._id.toString();
   }
 
+  // Build report URLs
+  const baseUrl = req.nextUrl.origin || process.env.NEXTAUTH_URL || "https://verify.clusoinfolink.com";
+  const pdfUrl = `${baseUrl}/api/v1/external/report/${verification.id}/pdf`;
+
+  // Map verification type to the appropriate client report page
+  const reportPageMap: Record<string, string> = {
+    court_record: "court-record-report",
+    philippines_court: "philippines-court-report",
+    singapore_court: "singapore-court-report",
+    uk_court: "uk-court-report",
+    malaysia_court: "malaysia-court-report",
+    saflii_court: "saflii-court-report",
+    saps_wanted: "saps-wanted-report",
+    interpol: "interpol-report",
+    rednotice_worldwide: "rednotice-worldwide-report",
+    passport: "passport-report",
+    digital_address: "digital-address-report",
+    employment: "employment-report",
+    education: "education-report",
+    identity: "report",
+  };
+  const reportPage = reportPageMap[verification.type] || "report";
+  const reportUrl = `${baseUrl}/client/${reportPage}?id=${verification.id}`;
+
   const responseData = {
     success: true,
     requestId: verification.id,
     type: verification.type || "identity",
     status: verification.status,
     candidateName: verification.name,
+    reportUrl,
+    pdfUrl,
     report: cleanDoc,
   };
 

@@ -47,7 +47,7 @@ const ENDPOINTS: EndpointDoc[] = [
       success: true,
       requestId: "ACM040926-0001",
       status: "processing",
-      candidateSetupUrl: "https://candidate.verify.ozclu.com/?email=rahul.sharma%40example.com&password=Ozclu%40...",
+      candidateSetupUrl: "https://candidate.verify.clusoinfolink.com/?email=rahul.sharma%40example.com&password=Cluso%40...",
       message: "Identity verification request created successfully."
     }
   },
@@ -195,7 +195,7 @@ const ENDPOINTS: EndpointDoc[] = [
       success: true,
       requestId: "DAV040926-0001",
       status: "processing",
-      candidateSetupUrl: "https://candidate.verify.ozclu.com/?email=priya.s%40example.com..."
+      candidateSetupUrl: "https://candidate.verify.clusoinfolink.com/?email=priya.s%40example.com..."
     }
   },
   {
@@ -273,6 +273,47 @@ const ENDPOINTS: EndpointDoc[] = [
     }
   },
   {
+    id: "philippines-court",
+    category: "verify",
+    method: "POST",
+    path: "/api/v1/external/verify/philippines-court",
+    name: "Philippines Court of Appeals Check",
+    description: "Searches Court of Appeals case records across CA Manila, CA Visayas, and CA Mindanao stations.",
+    requestBody: {
+      candidateName: "Juan Dela Cruz",
+      candidateDob: "1990-06-15",
+      station: "all",
+      caseNo: ""
+    },
+    responseExample: {
+      success: true,
+      requestId: "PHC070926-0001",
+      status: "processing",
+      message: "Philippines Court of Appeals check initiated. Results will be available via the status endpoint."
+    }
+  },
+  {
+    id: "singapore-court",
+    category: "verify",
+    method: "POST",
+    path: "/api/v1/external/verify/singapore-court",
+    name: "Singapore Court Check",
+    description: "Searches Singapore Judiciary hearing lists & judgments across Supreme Court, State Courts, and Family Justice Courts.",
+    requestBody: {
+      candidateName: "Tan Wei Lin",
+      court: "Supreme Court",
+      hearingType: "",
+      judgeName: "",
+      lawFirm: ""
+    },
+    responseExample: {
+      success: true,
+      requestId: "SGC070926-0001",
+      status: "processing",
+      message: "Singapore Court check initiated. Results will be available via the status endpoint."
+    }
+  },
+  {
     id: "status",
     category: "retrieve",
     method: "GET",
@@ -298,7 +339,7 @@ const ENDPOINTS: EndpointDoc[] = [
     category: "retrieve",
     method: "GET",
     path: "/api/v1/external/report/{requestId}",
-    name: "Download Completed Report",
+    name: "Download Completed Report (JSON)",
     description: "Fetches full sanitized verification report data once the check has reached Completed status.",
     responseExample: {
       success: true,
@@ -316,7 +357,22 @@ const ENDPOINTS: EndpointDoc[] = [
         digilockerAadhaar: "XXXXXXXX9481",
         digilockerPan: "XXXXX4829X",
         hasPhoto: true
-      }
+      },
+      reportUrl: "https://verify.clusoinfolink.com/client/report/ACM040926-0001",
+      pdfUrl: "https://verify.clusoinfolink.com/api/v1/external/report/ACM040926-0001/pdf"
+    }
+  },
+  {
+    id: "pdf-report",
+    category: "retrieve",
+    method: "GET",
+    path: "/api/v1/external/report/{requestId}/pdf",
+    name: "Download Report as PDF (HTML)",
+    description: "Download the completed verification report as a print-ready self-contained HTML document.",
+    responseExample: {
+      contentType: "text/html; charset=utf-8",
+      contentDisposition: "attachment; filename=\"report-ACM040926-0001.html\"",
+      body: "<!DOCTYPE html><html>... (full printable report) ...</html>"
     }
   },
   {
@@ -382,7 +438,7 @@ export default function ApiDocsPage() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/client/verifiers?tab=api"
+            href="/client/api-settings"
             className="px-4 py-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold flex items-center gap-1.5 transition-colors"
           >
             <Key className="w-3.5 h-3.5" />
@@ -473,7 +529,7 @@ export default function ApiDocsPage() {
         <main className="flex-1 p-6 lg:p-10 space-y-10 overflow-y-auto">
           {/* Intro & Auth Guide */}
           <section id="authentication" className="space-y-4 pb-8 border-b border-slate-800">
-            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-white">Ozclu Verify REST API</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-white">Cluso Infolink Verify REST API</h1>
             <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
               Integrate background verifications directly into your web applications, applicant tracking systems (ATS), or HR platforms.
               Authenticate your requests using API keys issued by your organization owner or administrator.
@@ -614,8 +670,8 @@ export default function ApiDocsPage() {
                   onClick={() => {
                     const curl =
                       selectedEndpoint.method === "POST"
-                        ? `curl -X POST https://verify.ozclu.in${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(selectedEndpoint.requestBody || {})}'`
-                        : `curl -X GET https://verify.ozclu.in${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY"`;
+                        ? `curl -X POST https://verify.clusoinfolink.com${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(selectedEndpoint.requestBody || {})}'`
+                        : `curl -X GET https://verify.clusoinfolink.com${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY"`;
                     handleCopy(curl, "curl");
                   }}
                   className="text-xs text-primary hover:underline flex items-center gap-1 cursor-pointer"
@@ -628,8 +684,8 @@ export default function ApiDocsPage() {
               <div className="bg-black/70 rounded-xl p-3.5 font-mono text-xs text-slate-200 overflow-x-auto border border-slate-800">
                 <pre>
                   {selectedEndpoint.method === "POST"
-                    ? `curl -X POST https://verify.ozclu.in${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(selectedEndpoint.requestBody || {}, null, 2)}'`
-                    : `curl -X GET https://verify.ozclu.in${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY"`}
+                    ? `curl -X POST https://verify.clusoinfolink.com${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(selectedEndpoint.requestBody || {}, null, 2)}'`
+                    : `curl -X GET https://verify.clusoinfolink.com${selectedEndpoint.path} \\\n  -H "Authorization: Bearer sk_live_YOUR_API_KEY"`}
                 </pre>
               </div>
             </div>

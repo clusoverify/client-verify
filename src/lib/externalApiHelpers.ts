@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { Db } from "mongodb";
+type Db = any;
 import { authenticateApiKey, isApiAuthError, requireApiPermission, getCheckTypeRate, ApiAuthResult } from "./externalApiAuth";
 import { applyRateLimit, rateLimitHeaders } from "./apiRateLimit";
 import { logApiUsage } from "./apiUsageLog";

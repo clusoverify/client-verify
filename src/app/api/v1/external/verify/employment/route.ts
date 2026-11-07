@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       let randStr = "";
       const rb = randomBytes(8);
       for (let i = 0; i < 8; i++) randStr += charset.charAt(rb[i] % charset.length);
-      const tempPassword = `Ozclu@${randStr}`;
+      const tempPassword = `Cluso@${randStr}`;
       const hashed = bcrypt.hashSync(tempPassword, 10);
 
       const existing = await db.collection("users").findOne({ email });

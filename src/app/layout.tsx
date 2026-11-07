@@ -23,8 +23,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Verify with Ozclu — Client Portal",
-  description: "Ozclu Identity Verification Portal for clients to initiate and monitor candidate identity checks.",
+  title: "Verify with Cluso Infolink — Client Portal",
+  description: "Cluso Infolink Identity Verification Portal for clients to initiate and monitor candidate identity checks.",
 };
 
 export default function RootLayout({

@@ -48,6 +48,8 @@ export async function GET(
     verification.safliiCourtCompletedAt ||
     verification.ukCourtCompletedAt ||
     verification.malaysiaCourtCompletedAt ||
+    verification.philippinesCourtCompletedAt ||
+    verification.singaporeCourtCompletedAt ||
     verification.passportCompletedAt ||
     verification.sapsWantedCompletedAt ||
     verification.interpolCompletedAt ||
@@ -69,6 +71,8 @@ export async function GET(
         verification.safliiCourtStatus ||
         verification.ukCourtStatus ||
         verification.malaysiaCourtStatus ||
+        verification.philippinesCourtStatus ||
+        verification.singaporeCourtStatus ||
         verification.sapsWantedStatus ||
         verification.passportStatus ||
         verification.status,

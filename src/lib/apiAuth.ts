@@ -115,7 +115,7 @@ export function getCandidatePortalUrl(): string {
     return envUrl.trim().replace(/\/+$/, "");
   }
   if (process.env.NODE_ENV === "production") {
-    return "https://candidate.verify.ozclu.com";
+    return "https://candidate.verify.clusoinfolink.com";
   }
   return "http://localhost:3012";
 }

@@ -5,7 +5,7 @@
  * for billing and auditing purposes.
  */
 
-import { Db } from "mongodb";
+type Db = any;
 
 export interface ApiUsageLogEntry {
   orgId: string;
@@ -87,9 +87,9 @@ export async function getOrgUsageSummary(
 
   const results = await db.collection("api_usage_logs").aggregate(pipeline).toArray();
 
-  const totalCalls = results.reduce((sum, r) => sum + r.calls, 0);
-  const successCalls = results.reduce((sum, r) => sum + r.successCalls, 0);
-  const totalCost = results.reduce((sum, r) => sum + r.cost, 0);
+  const totalCalls = results.reduce((sum: number, r: any) => sum + r.calls, 0);
+  const successCalls = results.reduce((sum: number, r: any) => sum + r.successCalls, 0);
+  const totalCost = results.reduce((sum: number, r: any) => sum + r.cost, 0);
   const currency = results.length > 0 ? results[0].currency : "USD";
 
   return {
@@ -98,7 +98,7 @@ export async function getOrgUsageSummary(
     failedCalls: totalCalls - successCalls,
     totalCost,
     currency,
-    byCheckType: results.map((r) => ({
+    byCheckType: results.map((r: any) => ({
       checkType: r._id,
       calls: r.calls,
       successCalls: r.successCalls,
@@ -148,9 +148,9 @@ export async function getGlobalUsageSummary(
   const results = await db.collection("api_usage_logs").aggregate(pipeline).toArray();
 
   return {
-    totalCalls: results.reduce((sum, r) => sum + r.calls, 0),
-    totalCost: results.reduce((sum, r) => sum + r.cost, 0),
-    byOrg: results.map((r) => ({
+    totalCalls: results.reduce((sum: number, r: any) => sum + r.calls, 0),
+    totalCost: results.reduce((sum: number, r: any) => sum + r.cost, 0),
+    byOrg: results.map((r: any) => ({
       orgId: r._id.orgId,
       orgName: r._id.orgName,
       calls: r.calls,
@@ -183,7 +183,7 @@ export async function getOrgUsageLogs(
   ]);
 
   return {
-    logs: logs.map((l) => ({ ...l, _id: l._id.toString() })),
+    logs: logs.map((l: any) => ({ ...l, _id: l._id.toString() })),
     total,
   };
 }
@@ -212,7 +212,7 @@ export async function getAllUsageLogs(
   ]);
 
   return {
-    logs: logs.map((l) => ({ ...l, _id: l._id.toString() })),
+    logs: logs.map((l: any) => ({ ...l, _id: l._id.toString() })),
     total,
   };
 }

@@ -4,7 +4,9 @@
  * Provides helpers for soft-deleting documents and filtering out soft-deleted records.
  */
 
-import { Db, Filter } from "mongodb";
+// MongoDB/D1 Database interface
+type Db = any;
+type Filter<T = any> = any;
 
 // ─── Soft Delete Fields ────────────────────────────────────────
 

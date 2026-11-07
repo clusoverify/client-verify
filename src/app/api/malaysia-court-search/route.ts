@@ -26,9 +26,9 @@ import { isRecordFullNameMatch } from "src/lib/nameMatching";
 
 const EJUDGMENT_API_URL =
   "https://ejudgment.kehakiman.gov.my/EJudgmentWeb/eJudgmentService.asmx/GetEJudgmentPortalSearchList";
-const MAX_RETRIES = 1;
-const RETRY_DELAY_MS = 1_500;
-const REQUEST_TIMEOUT_MS = 8_000;
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2_000;
+const REQUEST_TIMEOUT_MS = 20_000;
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -413,20 +413,21 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // If gateway connection times out or fails, complete gracefully with clear record
-    const failSummary = `Verified Clear: Zero matching adverse court judgments or records identified in Portal eJudgment Malaysia for "${candidateName}"`;
+    // All retries exhausted — mark as error (do NOT silently report as clean)
+    const errorMessage = lastError?.message || "Unknown connectivity issue";
+    const failSummary = `Malaysia Court search encountered an issue: ${errorMessage}. Unable to confirm clean record.`;
     await db.collection("verifications").updateOne(
       { id: verificationId },
       {
         $set: {
-          malaysiaCourtStatus: "completed",
+          malaysiaCourtStatus: "error",
           malaysiaCourtSummary: failSummary,
           malaysiaCourtResults: [],
           malaysiaCourtHasRecords: false,
           malaysiaCourtTotalResults: 0,
           malaysiaCourtTotalAvailable: 0,
           malaysiaCourtCompletedAt: new Date().toISOString(),
-          status: "Completed",
+          status: "Halted",
           notes: failSummary,
           reportDetails: failSummary,
         },
@@ -434,21 +435,21 @@ export async function POST(req: NextRequest) {
           attempts: {
             date: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
             verifier: "System (Portal eJudgment Gateway)",
-            status: "Verified",
+            status: "Halted",
             notes: failSummary,
           } as any,
         },
       }
     );
 
-    return NextResponse.json({
-      success: true,
-      totalCount: 0,
-      recordsReturned: 0,
-      hasRecords: false,
-      summary: failSummary,
-      records: [],
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        error: `Search failed: ${errorMessage}`,
+        summary: failSummary,
+      },
+      { status: 502 }
+    );
   } catch (error: any) {
     console.error("[MY-COURT] Fatal search handler error:", error);
     return NextResponse.json(

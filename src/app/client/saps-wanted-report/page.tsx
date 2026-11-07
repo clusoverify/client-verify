@@ -310,9 +310,9 @@ function SapsWantedReportContent() {
         {/* Page Block (A4 Sheet Dimensions 210mm x 297mm) */}
         <div className="print-page-block w-full min-h-[297mm] bg-white border-[5px] border-double border-[#0F2A5C] p-6 sm:p-8 relative my-0 mx-auto box-border flex flex-col justify-between">
           <div className="flex flex-col flex-1">
-            {/* Header Top Row: Left Ozclu logo, Middle Authority Logo, Right Report Number */}
+            {/* Header Top Row: Left Cluso Infolink logo, Middle Authority Logo, Right Report Number */}
             <div className="flex items-center justify-between gap-4 mb-6 border-b-2 border-slate-100 pb-5">
-              {/* Top Left: Ozclu / Company Logo */}
+              {/* Top Left: Cluso Infolink / Company Logo */}
               <div className="flex justify-start items-center shrink-0 w-1/3">
                 {settings && settings.logo ? (
                   <div className="h-9 sm:h-11 max-w-[180px] flex items-center justify-start">
@@ -320,7 +320,7 @@ function SapsWantedReportContent() {
                   </div>
                 ) : (
                   <div className="h-9 sm:h-11 flex items-center justify-start">
-                    <img src="/ozclu-logo-long-default.svg" alt="Ozclu Logo" className="h-8 sm:h-10 w-auto object-contain" />
+                    <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink Logo" className="h-8 sm:h-10 w-auto object-contain" />
                   </div>
                 )}
               </div>
@@ -358,7 +358,7 @@ function SapsWantedReportContent() {
               </div>
               <div className="space-y-1.5 sm:text-right">
                 <div>Generated At: <span className="text-slate-900 font-mono">{generatedAtDate} (IST)</span></div>
-                <div>Verified By: <span className="text-slate-900 font-bold">Ozclu Verify</span></div>
+                <div>Verified By: <span className="text-slate-900 font-bold">Cluso Infolink Verify</span></div>
               </div>
             </div>
 
@@ -390,7 +390,7 @@ function SapsWantedReportContent() {
                 </div>
                 <div className="space-y-1">
                   <div><span className="text-slate-500 font-semibold">Requesting Org:</span> <span className="font-bold text-slate-800">{verification.requestingOrgName || verification.orgName}</span></div>
-                  <div><span className="text-slate-500 font-semibold">Client Org:</span> <span className="font-bold text-slate-800">{verification.orgName || verification.requestingOrgName || "Ozclu"}</span></div>
+                  <div><span className="text-slate-500 font-semibold">Client Org:</span> <span className="font-bold text-slate-800">{verification.orgName || verification.requestingOrgName || "Cluso Infolink"}</span></div>
                   <div><span className="text-slate-500 font-semibold">Jurisdiction:</span> <span className="font-bold text-slate-800">Republic of South Africa</span></div>
                   <div><span className="text-slate-500 font-semibold">Screening Registry:</span> <span className="font-bold text-[#0F2A5C]">South African Police Service (SAPS)</span></div>
                   <div><span className="text-slate-500 font-semibold">Target Province:</span> <span className="font-bold text-slate-800">{targetProvince || "National (All Provinces)"}</span></div>
@@ -652,10 +652,10 @@ function SapsWantedReportContent() {
             <div className="my-6 p-4 border border-slate-200 rounded-xl bg-slate-50/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 print-avoid-break">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#0F2A5C] text-white flex items-center justify-center font-bold text-sm shadow-xs">
-                  OZ
+                  CI
                 </div>
                 <div>
-                  <span className="text-xs font-black text-slate-900 block">Ozclu Verify Technologies</span>
+                  <span className="text-xs font-black text-slate-900 block">Cluso Infolink Verify Technologies</span>
                   <span className="text-[10px] text-slate-500">Official Identity &amp; Crime-Stop Screening Authority</span>
                 </div>
               </div>
@@ -667,7 +667,7 @@ function SapsWantedReportContent() {
                 </div>
                 <div className="w-12 h-12 border border-slate-200 rounded-lg bg-white flex items-center justify-center p-1 shadow-2xs">
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://verify.ozclu.com/verify?id=${reportNo}`)}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://verify.clusoinfolink.com/verify?id=${reportNo}`)}`}
                     alt="QR Code"
                     className="w-full h-full object-contain"
                   />
@@ -686,7 +686,7 @@ function SapsWantedReportContent() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1.5 mt-2 text-[7.5px] sm:text-[8px] font-bold uppercase tracking-wider text-slate-400">
               <div>Verification ID: {reportNo}</div>
               <div>Page 2 of {totalPages}</div>
-              <div>Powered by Ozclu Integrity Network</div>
+              <div>Powered by Cluso Infolink Integrity Network</div>
             </div>
           </div>
         </div>
@@ -722,7 +722,7 @@ function SapsWantedReportContent() {
               <div className="border-t border-slate-200 pt-3 mt-auto text-[8px] sm:text-[8.5px] text-slate-400 font-bold uppercase tracking-wider flex justify-between items-center">
                 <div>Verification ID: {reportNo}</div>
                 <div>Page 3 of 3</div>
-                <div>Powered by Ozclu Integrity Network</div>
+                <div>Powered by Cluso Infolink Integrity Network</div>
               </div>
             </div>
           );

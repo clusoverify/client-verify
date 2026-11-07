@@ -318,7 +318,7 @@ function RednoticeWorldwideReportContent() {
               </p>
               <div className="flex justify-between items-end mt-4 pt-2 border-t border-slate-100">
                 <div>
-                  <span className="font-bold text-slate-600 block">OZCLU VERIFICATION SERVICES</span>
+                  <span className="font-bold text-slate-600 block">CLUSO INFOLINK VERIFICATION SERVICES</span>
                   <span>Digitally Generated &amp; Cryptographically Logged Record</span>
                 </div>
                 <div className="text-right">
@@ -445,7 +445,7 @@ function RednoticeWorldwideReportContent() {
 
             {/* Footer on Page 2 */}
             <div className="mt-8 pt-4 border-t border-slate-200 text-[10px] text-slate-400 flex justify-between items-center">
-              <span>OZCLU VERIFICATION SERVICES &bull; CONFIDENTIAL &amp; PROPRIETARY</span>
+              <span>CLUSO INFOLINK VERIFICATION SERVICES &bull; CONFIDENTIAL &amp; PROPRIETARY</span>
               <span className="font-mono">Ref: {reportNo} (Page 2)</span>
             </div>
           </div>

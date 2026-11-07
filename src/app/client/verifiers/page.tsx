@@ -55,7 +55,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/identity",
     description: "Initiates candidate identity check, creates candidate portal login, and returns self-setup URL.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/identity \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/identity \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -67,7 +67,7 @@ const API_ENDPOINTS: EndpointExample[] = [
       success: true,
       requestId: "INF040926-0001",
       status: "processing",
-      candidateSetupUrl: "http://localhost:3012/?email=jane.doe%40example.com&password=Ozclu%40...",
+      candidateSetupUrl: "http://localhost:3012/?email=jane.doe%40example.com&password=Cluso%40...",
       message: "Identity verification request created successfully."
     },
     notes: "Returns candidateSetupUrl which you can send to candidate via email/SMS."
@@ -79,7 +79,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/court-record",
     description: "Multi-address civil and criminal litigation search across Indian district and high courts.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/court-record \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/court-record \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -113,7 +113,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/passport",
     description: "Live government validation of Indian passport file number and date of birth via Passport Seva.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/passport \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/passport \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -142,7 +142,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/digital-address",
     description: "GPS-tagged geo-selfie and doorstep verification for physical residential address confirmation.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/digital-address \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/digital-address \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -166,7 +166,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/interpol",
     description: "Instant cross-reference against international Interpol wanted and missing persons database.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/interpol \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/interpol \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -191,7 +191,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/rednotice",
     description: "Global screening across 196 member countries for active international fugitive red notices.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/rednotice \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/rednotice \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -215,7 +215,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/saflii-court",
     description: "Litigation & judgment checks across High Courts and Supreme Court of Appeal of South Africa.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/saflii-court \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/saflii-court \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -238,7 +238,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/saps-wanted",
     description: "National police wanted persons registry check for South Africa.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/saps-wanted \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/saps-wanted \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -263,7 +263,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/uk-court",
     description: "Courts and Tribunals Judiciary of England & Wales official judgments and sentencing remarks.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/uk-court \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/uk-court \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -287,7 +287,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/malaysia-court",
     description: "Official eJudgment portal of Mahkamah Persekutuan Malaysia litigation records.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/malaysia-court \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/malaysia-court \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -305,13 +305,62 @@ const API_ENDPOINTS: EndpointExample[] = [
     notes: "Asynchronous search. Full case numbers and judgment PDFs returned when completed."
   },
   {
+    id: "philippines-court",
+    category: "verification",
+    name: "Philippines Court of Appeals Check",
+    method: "POST",
+    path: "/api/v1/external/verify/philippines-court",
+    description: "Live search across Court of Appeals stations: CA Manila, CA Visayas, and CA Mindanao.",
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/philippines-court \\
+  -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "candidateName": "Juan Dela Cruz",
+    "candidateDob": "1990-06-15",
+    "station": "all",
+    "caseNo": ""
+  }'`,
+    sampleResponse: {
+      success: true,
+      requestId: "PHC070926-0001",
+      status: "processing",
+      message: "Philippines Court of Appeals check initiated. Results will be available via the status endpoint."
+    },
+    notes: "Searches all three CA stations (Manila, Visayas, Mindanao) by default. Set station to 'mnl', 'ceb', or 'cdo' to target one."
+  },
+  {
+    id: "singapore-court",
+    category: "verification",
+    name: "Singapore Court Records Check",
+    method: "POST",
+    path: "/api/v1/external/verify/singapore-court",
+    description: "Singapore Judiciary hearing list search across Supreme Court, State Courts, and Family Justice Courts.",
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/singapore-court \\
+  -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "candidateName": "Tan Wei Lin",
+    "court": "Supreme Court",
+    "hearingType": "",
+    "judgeName": "",
+    "lawFirm": ""
+  }'`,
+    sampleResponse: {
+      success: true,
+      requestId: "SGC070926-0001",
+      status: "processing",
+      message: "Singapore Court check initiated. Results will be available via the status endpoint."
+    },
+    notes: "Optional: filter by court ('Supreme Court', 'State Courts', 'Family Justice Courts'), hearingType, judgeName, lawFirm."
+  },
+  {
     id: "employment",
     category: "verification",
     name: "Employment Verification",
     method: "POST",
     path: "/api/v1/external/verify/employment",
     description: "Previous employer background check with multi-tenure and designation validation.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/employment \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/employment \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -344,7 +393,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "POST",
     path: "/api/v1/external/verify/education",
     description: "Academic degree, university board, roll number, and graduation credentials verification.",
-    requestCurl: `curl -X POST https://verify.ozclu.in/api/v1/external/verify/education \\
+    requestCurl: `curl -X POST https://verify.clusoinfolink.com/api/v1/external/verify/education \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -375,7 +424,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "GET",
     path: "/api/v1/external/status/{requestId}",
     description: "Poll real-time processing status, sub-status, and timestamps for any verification check.",
-    requestCurl: `curl -X GET "https://verify.ozclu.in/api/v1/external/status/INF040926-0001" \\
+    requestCurl: `curl -X GET "https://verify.clusoinfolink.com/api/v1/external/status/INF040926-0001" \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE"`,
     sampleResponse: {
       success: true,
@@ -400,7 +449,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "GET",
     path: "/api/v1/external/report/{requestId}",
     description: "Download the complete sanitized verification report JSON payload once check is completed.",
-    requestCurl: `curl -X GET "https://verify.ozclu.in/api/v1/external/report/INF040926-0001" \\
+    requestCurl: `curl -X GET "https://verify.clusoinfolink.com/api/v1/external/report/INF040926-0001" \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE"`,
     sampleResponse: {
       success: true,
@@ -417,7 +466,24 @@ const API_ENDPOINTS: EndpointExample[] = [
         source: "api"
       }
     },
-    notes: "Returns 200 with status message if verification is still in processing."
+    notes: "Returns 200 with status message if verification is still in processing. Includes reportUrl and pdfUrl links."
+  },
+  {
+    id: "pdf-report",
+    category: "retrieval",
+    name: "Download Report as PDF (HTML)",
+    method: "GET",
+    path: "/api/v1/external/report/{requestId}/pdf",
+    description: "Download the completed verification report as a print-ready HTML document. Open in browser and print to save as PDF.",
+    requestCurl: `curl -X GET "https://verify.clusoinfolink.com/api/v1/external/report/INF040926-0001/pdf" \\
+  -H "Authorization: Bearer sk_live_YOUR_KEY_HERE" \\
+  -o "report-INF040926-0001.html"`,
+    sampleResponse: {
+      contentType: "text/html; charset=utf-8",
+      contentDisposition: "attachment; filename=\"cluso-infolink-report-INF040926-0001.html\"",
+      body: "<!DOCTYPE html><html>... (full self-contained report document) ...</html>"
+    },
+    notes: "Returns HTML with Content-Disposition: attachment. Open in any browser and Ctrl+P to save as PDF. Or use wkhtmltopdf / Puppeteer."
   },
   {
     id: "list",
@@ -426,7 +492,7 @@ const API_ENDPOINTS: EndpointExample[] = [
     method: "GET",
     path: "/api/v1/external/list",
     description: "Paginated list of verifications for your organisation with optional filters (page, limit, status, type).",
-    requestCurl: `curl -X GET "https://verify.ozclu.in/api/v1/external/list?page=1&limit=20&status=Completed" \\
+    requestCurl: `curl -X GET "https://verify.clusoinfolink.com/api/v1/external/list?page=1&limit=20&status=Completed" \\
   -H "Authorization: Bearer sk_live_YOUR_KEY_HERE"`,
     sampleResponse: {
       success: true,
@@ -679,7 +745,7 @@ export default function ManageVerifiersPage() {
           <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-1">
             {activeTab === "human"
               ? `Configure verifiers and compliance analyst accounts assigned to work under ${profile.org_name}.`
-              : `Connect your external website, ATS, or HRMS directly to Ozclu Verify via secure API keys.`}
+              : `Connect your external website, ATS, or HRMS directly to Cluso Infolink Verify via secure API keys.`}
           </p>
         </div>
 
@@ -842,7 +908,7 @@ export default function ManageVerifiersPage() {
                       <span>Active Limit Reached</span>
                     </h4>
                     <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-                      Your organisation has reached the maximum of <strong className="text-slate-800 font-extrabold">{maxVerifiers} active verifiers</strong>. Deactivate an existing verifier to free up a slot, or contact your account manager at Ozclu to increase capacity.
+                      Your organisation has reached the maximum of <strong className="text-slate-800 font-extrabold">{maxVerifiers} active verifiers</strong>. Deactivate an existing verifier to free up a slot, or contact your account manager at Cluso Infolink to increase capacity.
                     </p>
                   </div>
                 ) : (
@@ -1103,7 +1169,7 @@ export default function ManageVerifiersPage() {
               </div>
               <div className="mt-3">
                 <span className="font-mono text-xs font-bold text-slate-800 truncate block">
-                  https://verify.ozclu.in
+                  https://verify.clusoinfolink.com
                 </span>
               </div>
               <div className="mt-1 text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
@@ -1344,7 +1410,7 @@ export default function ManageVerifiersPage() {
                   target="_blank"
                   className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 group"
                 >
-                  <span>All 15 Endpoints</span>
+                  <span>All {API_ENDPOINTS.length} Endpoints</span>
                   <span className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
                 </Link>
               </div>
@@ -1371,7 +1437,7 @@ export default function ManageVerifiersPage() {
                       : "text-slate-500 hover:text-slate-900"
                   }`}
                 >
-                  Verify (12)
+                  Verify ({API_ENDPOINTS.filter(e => e.category === "verification").length})
                 </button>
                 <button
                   type="button"
@@ -1382,7 +1448,7 @@ export default function ManageVerifiersPage() {
                       : "text-slate-500 hover:text-slate-900"
                   }`}
                 >
-                  Reports (3)
+                  Reports ({API_ENDPOINTS.filter(e => e.category === "retrieval").length})
                 </button>
               </div>
 
@@ -1426,7 +1492,7 @@ export default function ManageVerifiersPage() {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleCopyText(`https://verify.ozclu.in${ep.path}`, ep.id);
+                            handleCopyText(`https://verify.clusoinfolink.com${ep.path}`, ep.id);
                           }}
                           className={`p-1 rounded-md transition-colors cursor-pointer ${
                             copiedEndpoint === ep.id
@@ -1450,7 +1516,7 @@ export default function ManageVerifiersPage() {
               {/* Bottom hint */}
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
                 <span>Click any endpoint above to preview its cURL request</span>
-                <span className="font-semibold text-slate-500">15 / 15 active</span>
+                <span className="font-semibold text-slate-500">{API_ENDPOINTS.length} / {API_ENDPOINTS.length} active</span>
               </div>
             </div>
           </div>

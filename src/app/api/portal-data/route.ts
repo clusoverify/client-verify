@@ -245,7 +245,7 @@ export async function POST(req: NextRequest) {
 
         // Security: force orgName to the session user's org (prevent cross-tenant creation),
         // unless it's an administrator session (Ozclu/Admin).
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? orgName : (sessionOrgName || orgName);
         
         const cleanOrg = safeOrgName.replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
@@ -265,14 +265,14 @@ export async function POST(req: NextRequest) {
         const { randomBytes } = await import("crypto");
         const bcrypt = await import("bcryptjs");
 
-        // Generate a temporary password matching Ozclu@<random8chars>
+        // Generate a temporary password matching Cluso@<random8chars>
         const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         let randStr = "";
         const randomBytesArr = randomBytes(8);
         for (let i = 0; i < 8; i++) {
           randStr += charset.charAt(randomBytesArr[i] % charset.length);
         }
-        const tempPassword = `Ozclu@${randStr}`;
+        const tempPassword = `Cluso@${randStr}`;
         const hashedTempPassword = bcrypt.hashSync(tempPassword, 10);
         
         const existingUser = await db.collection("users").findOne({ email: email.toLowerCase().trim() });
@@ -639,7 +639,7 @@ export async function POST(req: NextRequest) {
         const validEmployments = Array.isArray(employments) ? employments.filter(e => e?.companyName?.trim()) : [];
         const itemCount = validEmployments.length > 0 ? validEmployments.length : 1;
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const defaultCountryRates: Record<string, number> = { Singapore: 15, Malaysia: 12, Philippines: 10, UAE: 20, India: 5 };
@@ -690,7 +690,7 @@ export async function POST(req: NextRequest) {
           for (let i = 0; i < 8; i++) {
             randStr += charset.charAt(randomBytesArr[i] % charset.length);
           }
-          tempPassword = `Ozclu@${randStr}`;
+          tempPassword = `Cluso@${randStr}`;
           const hashedTempPassword = bcrypt.hashSync(tempPassword, 10);
 
           const existingUser = await db.collection("users").findOne({ email: email.toLowerCase().trim() });
@@ -784,7 +784,7 @@ export async function POST(req: NextRequest) {
         const validEducation = Array.isArray(educationList) ? educationList.filter(e => e?.boardUniversity?.trim()) : [];
         const itemCount = validEducation.length > 0 ? validEducation.length : 1;
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const defaultCountryRates: Record<string, number> = { Singapore: 15, Malaysia: 12, Philippines: 10, UAE: 20, India: 5 };
@@ -835,7 +835,7 @@ export async function POST(req: NextRequest) {
           for (let i = 0; i < 8; i++) {
             randStr += charset.charAt(randomBytesArr[i] % charset.length);
           }
-          tempPassword = `Ozclu@${randStr}`;
+          tempPassword = `Cluso@${randStr}`;
           const hashedTempPassword = bcrypt.hashSync(tempPassword, 10);
 
           const existingUser = await db.collection("users").findOne({ email: email.toLowerCase().trim() });
@@ -1075,7 +1075,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate name and at least one address are required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const cleanOrg = (safeOrgName || "XXX").replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
@@ -1180,7 +1180,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate name and date of birth are required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const cleanOrg = (safeOrgName || "XXX").replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
@@ -1324,7 +1324,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate name and date of birth are required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const cleanOrg = (safeOrgName || "XXX").replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
@@ -1485,7 +1485,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate name or forename and surname are required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const nowTime = new Date();
@@ -1693,7 +1693,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "State / Province is required in candidate address" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const nowTime = new Date();
@@ -1809,7 +1809,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate name is required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const nowTime = new Date();
@@ -1930,7 +1930,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate / Search keyword is required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const nowTime = new Date();
@@ -2060,7 +2060,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate / Search keyword is required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const nowTime = new Date();
@@ -2183,7 +2183,7 @@ export async function POST(req: NextRequest) {
         }
 
         const effectiveName = (partyName || candidateName || caseNo || "").trim();
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const nowTime = new Date();
@@ -2282,7 +2282,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "File number and date of birth are required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const cleanOrg = (safeOrgName || "XXX").replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
@@ -2484,7 +2484,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Candidate name, email, and address are required" }, { status: 400 });
         }
 
-        const isAdminSession = sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
+        const isAdminSession = sessionOrgName?.toLowerCase() === "clusoinfolink" || sessionOrgName?.toLowerCase() === "ozclu" || sessionOrgName?.toLowerCase() === "admin";
         const safeOrgName = isAdminSession ? (orgName || sessionOrgName) : (sessionOrgName || orgName);
 
         const cleanOrg = (safeOrgName || "XXX").replace(/[^a-zA-Z]/g, "").slice(0, 3).padEnd(3, "X").toUpperCase();
@@ -2510,7 +2510,7 @@ export async function POST(req: NextRequest) {
         for (let i = 0; i < 8; i++) {
           randStr += charset.charAt(randomBytesArr[i] % charset.length);
         }
-        const tempPassword = `Ozclu@${randStr}`;
+        const tempPassword = `Cluso@${randStr}`;
         const hashedTempPassword = bcrypt.hashSync(tempPassword, 10);
 
         const emailLower = candidateEmail.toLowerCase().trim();

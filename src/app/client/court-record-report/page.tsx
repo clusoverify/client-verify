@@ -266,9 +266,9 @@ function CourtRecordReportContent() {
 
         {/* Page 1 Content Block */}
         <div className="print-page-block">
-          {/* Header Top Row: Left Ozclu logo (smaller), Middle Court logo (smaller), Right Report Number */}
+          {/* Header Top Row: Left Cluso Infolink logo (smaller), Middle Court logo (smaller), Right Report Number */}
           <div className="flex items-center justify-between gap-4 mb-6 border-b-2 border-slate-100 pb-5">
-            {/* Top Left: Ozclu / Company Logo (smaller) */}
+            {/* Top Left: Cluso Infolink / Company Logo (smaller) */}
             <div className="flex justify-start items-center shrink-0 w-1/3">
               {settings && settings.logo ? (
                 <div className="h-9 sm:h-11 max-w-[180px] flex items-center justify-start">
@@ -276,7 +276,7 @@ function CourtRecordReportContent() {
                 </div>
               ) : (
                 <div className="h-9 sm:h-11 flex items-center justify-start">
-                  <img src="/ozclu-logo-long-default.svg" alt="Ozclu Logo" className="h-8 sm:h-10 w-auto object-contain" />
+                  <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink Logo" className="h-8 sm:h-10 w-auto object-contain" />
                 </div>
               )}
             </div>
@@ -607,8 +607,8 @@ function CourtRecordReportContent() {
           </p>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <img src="/ozclu-logo-long-default.svg" alt="Ozclu" className="h-5 object-contain" />
-              <span className="text-[9px] font-bold text-slate-400">Powered by Ozclu Verify</span>
+              <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink" className="h-5 object-contain" />
+              <span className="text-[9px] font-bold text-slate-400">Powered by Cluso Infolink Verify</span>
             </div>
             <div className="flex items-center gap-1.5 bg-[#1B365D] text-white px-2 py-0.5 rounded shadow-sm border border-slate-200/80">
               <img src="/ecourts-logo.png" alt="eCourts Secured" className="w-3.5 h-3.5 object-contain invert brightness-200" />

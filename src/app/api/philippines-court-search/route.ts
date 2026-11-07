@@ -223,6 +223,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const { verificationId, candidateName, caseNo, station } = body;
 
+    if (!verificationId) {
+      return NextResponse.json(
+        { error: "Missing required field: verificationId" },
+        { status: 400 }
+      );
+    }
+
     const searchTerm = (caseNo || candidateName || "").trim();
 
     if (!searchTerm) {
@@ -234,36 +241,32 @@ export async function POST(req: NextRequest) {
 
     const { db } = await connectToDatabase();
 
-    // If verificationId provided, update status to searching
-    if (verificationId) {
-      await db.collection("verifications").updateOne(
-        { id: verificationId },
-        {
-          $set: {
-            philippinesCourtStatus: "searching",
-            philippinesCourtSearchInitiatedAt: new Date().toISOString(),
-          },
-        }
-      );
-    }
+    // Mark search in progress
+    await db.collection("verifications").updateOne(
+      { id: verificationId },
+      {
+        $set: {
+          philippinesCourtStatus: "searching",
+          philippinesCourtSearchInitiatedAt: new Date().toISOString(),
+        },
+      }
+    );
 
     let records: ParsedPhilippinesCourtRecord[] = [];
     try {
       records = await queryPhilippinesCourtPortal(searchTerm, station || "all");
     } catch (searchError: any) {
       console.error("[philippines-court-search] Live query error:", searchError);
-      if (verificationId) {
-        await db.collection("verifications").updateOne(
-          { id: verificationId },
-          {
-            $set: {
-              philippinesCourtStatus: "error",
-              philippinesCourtError: searchError.message || "Failed to query the Court of Appeals portal.",
-              philippinesCourtCompletedAt: new Date().toISOString(),
-            },
-          }
-        );
-      }
+      await db.collection("verifications").updateOne(
+        { id: verificationId },
+        {
+          $set: {
+            philippinesCourtStatus: "error",
+            philippinesCourtError: searchError.message || "Failed to query the Court of Appeals portal.",
+            philippinesCourtCompletedAt: new Date().toISOString(),
+          },
+        }
+      );
       return NextResponse.json(
         {
           error: "Failed to connect to the Court of Appeals of the Philippines portal. Please try again.",
@@ -288,21 +291,19 @@ export async function POST(req: NextRequest) {
     const hasRecords = finalRecords.length > 0;
     const completedAt = new Date().toISOString();
 
-    if (verificationId) {
-      await db.collection("verifications").updateOne(
-        { id: verificationId },
-        {
-          $set: {
-            philippinesCourtStatus: "completed",
-            philippinesCourtHasRecords: hasRecords,
-            philippinesCourtResults: finalRecords,
-            philippinesCourtTotalResults: finalRecords.length,
-            philippinesCourtCompletedAt: completedAt,
-            status: hasRecords ? "Needs Attention" : "Completed",
-          },
-        }
-      );
-    }
+    await db.collection("verifications").updateOne(
+      { id: verificationId },
+      {
+        $set: {
+          philippinesCourtStatus: "completed",
+          philippinesCourtHasRecords: hasRecords,
+          philippinesCourtResults: finalRecords,
+          philippinesCourtTotalResults: finalRecords.length,
+          philippinesCourtCompletedAt: completedAt,
+          status: hasRecords ? "Needs Attention" : "Completed",
+        },
+      }
+    );
 
     return NextResponse.json({
       success: true,

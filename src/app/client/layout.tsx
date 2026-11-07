@@ -118,7 +118,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             name: "Manage Verifiers",
             path: "/client/verifiers",
             icon: Users,
-          }
+          },
+          {
+            name: "API Connection",
+            path: "/client/api-settings",
+            icon: Code,
+          },
         ]
       : []),
     {
@@ -303,7 +308,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               <Link href="/client/identity-verification" className="block transition-transform duration-300 hover:scale-[1.05] hover:rotate-1 select-none">
                 <OzcluLogo size="sm" />
               </Link>
-              <span className="font-headline-md font-bold text-[#181d16] tracking-tight hidden sm:inline">Verify with Ozclu</span>
+              <span className="font-headline-md font-bold text-[#181d16] tracking-tight hidden sm:inline">Verify with Cluso Infolink</span>
               <span className="font-headline-md font-bold text-[#181d16] tracking-tight sm:hidden">Verify</span>
             </div>
           </div>

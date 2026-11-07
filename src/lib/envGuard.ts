@@ -15,7 +15,7 @@ export function validateEnvironment(): void {
   const secret = process.env.NEXTAUTH_SECRET;
   if (!secret) {
     errors.push("NEXTAUTH_SECRET is not set.");
-  } else if (secret === "ozcluverify-secret-key-123456789") {
+  } else if (secret === "ozcluverify-secret-key-123456789" || secret === "clusoinfolink-secret-key-123456789") {
     errors.push("NEXTAUTH_SECRET is using the insecure default value. Set a strong, unique secret.");
   }
 

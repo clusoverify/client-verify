@@ -210,7 +210,7 @@ function SingaporeCourtReportContent() {
                   </div>
                 ) : (
                   <div className="h-9 sm:h-11 flex items-center justify-start">
-                    <img src="/ozclu-logo-long-default.svg" alt="Ozclu Logo" className="h-8 sm:h-10 w-auto object-contain" />
+                    <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink Logo" className="h-8 sm:h-10 w-auto object-contain" />
                   </div>
                 )}
               </div>
@@ -242,7 +242,7 @@ function SingaporeCourtReportContent() {
               </div>
               <div className="space-y-1.5 sm:text-right">
                 <div>Generated At: <span className="text-slate-900 font-mono">{generatedAtDate} (IST)</span></div>
-                <div>Verified By: <span className="text-slate-900 font-bold">Ozclu Verify</span></div>
+                <div>Verified By: <span className="text-slate-900 font-bold">Cluso Infolink Verify</span></div>
               </div>
             </div>
 
@@ -266,7 +266,7 @@ function SingaporeCourtReportContent() {
                 </div>
                 <div className="space-y-1">
                   <div><span className="text-slate-500 font-semibold">Requesting Org:</span> <span className="font-bold text-slate-800">{verification.requestingOrgName || verification.orgName}</span></div>
-                  <div><span className="text-slate-500 font-semibold">Client Org:</span> <span className="font-bold text-slate-800">{verification.orgName || verification.requestingOrgName || "Ozclu"}</span></div>
+                  <div><span className="text-slate-500 font-semibold">Client Org:</span> <span className="font-bold text-slate-800">{verification.orgName || verification.requestingOrgName || "Cluso Infolink"}</span></div>
                   <div><span className="text-slate-500 font-semibold">Jurisdiction:</span> <span className="font-bold text-slate-800">Republic of Singapore</span></div>
                   <div><span className="text-slate-500 font-semibold">Court:</span> <span className="font-bold text-[#751C24]">{verification.singaporeCourtSelectedCourt || "All Singapore Courts"}</span></div>
                   {verification.singaporeCourtSelectedHearingType && (
@@ -458,7 +458,7 @@ function SingaporeCourtReportContent() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1.5 mt-2 text-[7.5px] sm:text-[8px] font-bold uppercase tracking-wider text-slate-400">
               <div>Verification ID: {reportNo}</div>
               <div>Page 2 of {totalPages}</div>
-              <div>Powered by Ozclu Integrity Network</div>
+              <div>Powered by Cluso Infolink Integrity Network</div>
             </div>
           </div>
         </div>
@@ -489,7 +489,7 @@ function SingaporeCourtReportContent() {
               <div className="border-t border-slate-200 pt-3 mt-auto text-[8px] sm:text-[8.5px] text-slate-400 font-bold uppercase tracking-wider flex justify-between items-center">
                 <div>Verification ID: {reportNo}</div>
                 <div>Page 3 of 3</div>
-                <div>Powered by Ozclu Integrity Network</div>
+                <div>Powered by Cluso Infolink Integrity Network</div>
               </div>
             </div>
           );

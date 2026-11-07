@@ -5,7 +5,8 @@
  * Also manages account lockout via `failedAttempts` and `lockUntil` on user documents.
  */
 
-import { Db } from "mongodb";
+// MongoDB/D1 Database interface
+type Db = any;
 
 // ─── Rate Limit Bucket ─────────────────────────────────────────
 

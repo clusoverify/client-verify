@@ -23,18 +23,18 @@
 }
 
 @theme {
-  --color-primary: #016e1c; /* OzClu Primary Green */
+  --color-primary: #016e1c; /* Cluso Infolink Primary Green */
   --color-on-primary: #ffffff;
-  --color-primary-container: #eaf0e4; /* OzClu light container */
+  --color-primary-container: #eaf0e4; /* Cluso Infolink light container */
   --color-on-primary-container: #00450e;
   --color-inverse-primary: #5cb85c;
   
-  --color-secondary: #5b5f61; /* OzClu Secondary Grey */
+  --color-secondary: #5b5f61; /* Cluso Infolink Secondary Grey */
   --color-on-secondary: #ffffff;
   --color-secondary-container: #dfe4d9;
   --color-on-secondary-container: #181d16;
 
-  --color-tertiary: #C6982E; /* OzClu Gold Accent */
+  --color-tertiary: #C6982E; /* Cluso Infolink Gold Accent */
   --color-on-tertiary: #ffffff;
   --color-tertiary-container: #FFF4CC;
   --color-on-tertiary-container: #805b00;
@@ -59,7 +59,7 @@
   --color-on-tertiary-fixed: #805b00;
   --color-on-tertiary-fixed-variant: #A67D1F;
 
-  --color-background: #f6fbf0; /* OzClu surface (Creamy Sage Green) */
+  --color-background: #f6fbf0; /* Cluso Infolink surface (Creamy Sage Green) */
   --color-on-background: #181d16;
 
   --color-surface: #ffffff;

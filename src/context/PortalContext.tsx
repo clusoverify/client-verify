@@ -505,6 +505,7 @@ interface PortalContextType {
   settings: CompanySettings;
   organisation: Organisation | null;
   ozcluSettings: CompanySettings | null;
+  clusoSettings?: CompanySettings | null;
   suggestions: ClientSuggestion[];
   submitSuggestion: (params: { type: string; title: string; message: string; targetService?: string }) => Promise<any>;
   addInterpolVerification: (params: {
@@ -1695,6 +1696,7 @@ export const PortalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         settings,
         organisation,
         ozcluSettings,
+        clusoSettings: ozcluSettings,
         suggestions,
         apiKeys,
         apiUsage,

@@ -158,7 +158,7 @@ export default function ClientLoginPage() {
 
       {/* Footer */}
       <footer className="h-12 border-t border-[#f0f5ea] bg-white flex justify-center items-center font-body-sm text-slate-500 text-xs font-semibold">
-        <span>&copy; {new Date().getFullYear()} Ozclu. Client Link.</span>
+        <span>&copy; {new Date().getFullYear()} Cluso Infolink. Client Link.</span>
       </footer>
     </div>
   );

@@ -138,13 +138,13 @@ function BillableSummaryContent() {
             </div>
           </div>
           
-          {/* Ozclu Logo */}
+          {/* Cluso Infolink Logo */}
           <div className="self-center md:self-start shrink-0">
             <OzcluLogo size="sm" />
           </div>
         </div>
 
-        {/* Customer Details vs Ozclu Details Box */}
+        {/* Customer Details vs Cluso Infolink Details Box */}
         <div className="grid grid-cols-1 md:grid-cols-2 border border-slate-200 rounded-xl overflow-hidden mb-8 shadow-3xs">
           
           {/* Customer Details */}
@@ -190,18 +190,18 @@ function BillableSummaryContent() {
             </table>
           </div>
 
-          {/* Ozclu Details */}
+          {/* Cluso Infolink Details */}
           <div className="p-5 bg-white text-left">
-            <h3 className="font-extrabold text-sm text-[#00450e] border-b border-slate-100 pb-2 mb-3">Ozclu Details</h3>
+            <h3 className="font-extrabold text-sm text-[#00450e] border-b border-slate-100 pb-2 mb-3">Cluso Infolink Details</h3>
             <table className="w-full text-xs font-semibold text-slate-600 space-y-2.5">
               <tbody>
                 <tr>
                   <td className="w-1/3 py-1 font-bold">Company Name:</td>
-                  <td className="w-2/3 py-1 text-slate-900">{ozcluSettings?.companyName || "Ozclu Private Limited"}</td>
+                  <td className="w-2/3 py-1 text-slate-900">{ozcluSettings?.companyName || "Cluso Infolink Private Limited"}</td>
                 </tr>
                 <tr>
                   <td className="py-1 font-bold">Login Email:</td>
-                  <td className="py-1 text-slate-900">{ozcluSettings?.contactEmail || "indiaops@ozclu.com"}</td>
+                  <td className="py-1 text-slate-900">{ozcluSettings?.contactEmail || "indiaops@clusoinfolink.com"}</td>
                 </tr>
                 <tr>
                   <td className="py-1 font-bold">State Tax ID / Sales Tax ID:</td>
@@ -225,7 +225,7 @@ function BillableSummaryContent() {
                 </tr>
                 <tr>
                   <td className="py-1 font-bold">Invoice Email:</td>
-                  <td className="py-1 text-slate-900">{ozcluSettings?.invoiceEmail || ozcluSettings?.contactEmail || "indiaops@ozclu.com"}</td>
+                  <td className="py-1 text-slate-900">{ozcluSettings?.invoiceEmail || ozcluSettings?.contactEmail || "accounts@clusoinfolink.com"}</td>
                 </tr>
                 <tr>
                   <td className="py-1 font-bold">Billing same as company:</td>

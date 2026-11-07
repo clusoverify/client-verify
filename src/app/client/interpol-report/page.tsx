@@ -227,7 +227,7 @@ function InterpolReportContent() {
                 </div>
               ) : (
                 <div className="w-24 h-12 sm:w-28 sm:h-14 flex items-center justify-start shrink-0">
-                  <img src="/ozclu-logo-long-default.svg" alt="Ozclu Logo" className="object-contain max-h-full" />
+                  <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink Logo" className="object-contain max-h-full" />
                 </div>
               )}
             </div>
@@ -250,7 +250,7 @@ function InterpolReportContent() {
           </div>
           <div className="space-y-1.5 sm:text-right">
             <div>Generated At: <span className="text-slate-900 font-mono">{generatedAtDate}</span></div>
-            <div>Verified By: <span className="text-slate-900 font-bold">Ozclu Verify</span></div>
+            <div>Verified By: <span className="text-slate-900 font-bold">Cluso Infolink Verify</span></div>
             <div className="flex items-center justify-end gap-1.5 pt-1">
               <span className="text-slate-500">Verified Through:</span>
               <img src="/Notice-removebg-preview.png" alt="Notice Authority" className="h-6 object-contain" />
@@ -272,7 +272,7 @@ function InterpolReportContent() {
             <h3 className="text-xs uppercase font-extrabold tracking-wider text-[#1e3a8a] border-b border-slate-200 pb-1 mb-2">Request Details</h3>
             <div className="space-y-1.5 text-xs">
               <div><span className="text-slate-500 font-semibold">Requesting Org:</span> <span className="font-bold text-slate-800">{verification.requestingOrgName || verification.orgName}</span></div>
-              <div><span className="text-slate-500 font-semibold">Client Org:</span> <span className="font-bold text-slate-800">{verification.orgName || verification.requestingOrgName || "Ozclu"}</span></div>
+              <div><span className="text-slate-500 font-semibold">Client Org:</span> <span className="font-bold text-slate-800">{verification.orgName || verification.requestingOrgName || "Cluso Infolink"}</span></div>
             </div>
           </div>
         </div>
@@ -290,7 +290,7 @@ function InterpolReportContent() {
               
               <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5 justify-center md:justify-start">
                 <span>Issued by:</span>
-                <span className="font-extrabold text-[#1e3a8a]">Ozclu Verify</span>
+                <span className="font-extrabold text-[#1e3a8a]">Cluso Infolink Verify</span>
               </div>
 
               <p className="text-xs text-slate-700 font-semibold leading-relaxed max-w-[560px] mt-2 bg-white/80 p-3 rounded-lg border border-slate-200/60 shadow-2xs">
@@ -407,7 +407,7 @@ function InterpolReportContent() {
           </p>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-4 text-[9px] font-bold uppercase tracking-wider text-slate-400">
             <div>Verification ID: {reportNo}</div>
-            <div>Powered by Ozclu Integrity Network</div>
+            <div>Powered by Cluso Infolink Integrity Network</div>
           </div>
         </div>
 

@@ -308,7 +308,7 @@ function EmploymentReportContent() {
                 </div>
               ) : (
                 <div className="w-24 h-12 sm:w-28 sm:h-14 flex items-center justify-start shrink-0">
-                  <img src="/ozclu-logo-long-default.svg" alt="Ozclu Logo" className="object-contain max-h-full" />
+                  <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink Logo" className="object-contain max-h-full" />
                 </div>
               )}
             </div>
@@ -587,15 +587,15 @@ function EmploymentReportContent() {
           <div className="text-center font-bold text-slate-900 mb-2">--END OF REPORT--</div>
           <div className="font-bold text-slate-950 mb-1 uppercase tracking-wider text-[9px]">Important Notice &amp; Disclaimer</div>
           <p className="mb-2">
-            This report is provided by OZCLU PRIVATE LIMITED on a strictly confidential basis, solely for the exclusive use of the recipient for legitimate corporate and business purposes. It may not be reproduced, redistributed, or disclosed, in whole or in part, in any manner whatsoever without prior written consent.
+            This report is provided by CLUSO INFOLINK PRIVATE LIMITED on a strictly confidential basis, solely for the exclusive use of the recipient for legitimate corporate and business purposes. It may not be reproduced, redistributed, or disclosed, in whole or in part, in any manner whatsoever without prior written consent.
           </p>
           <p className="mb-2">
-            OZCLU PRIVATE LIMITED endeavors to ensure the highest level of accuracy and diligence in procuring, collecting, and compiling this data. Consequently, OZCLU PRIVATE LIMITED shall not be held liable for any direct, indirect, or consequential loss, damage, or injury resulting from any errors, omissions, or negligence in the procurement or communication of this information. Reliance upon this report is strictly at the user's sole risk.
+            CLUSO INFOLINK PRIVATE LIMITED endeavors to ensure the highest level of accuracy and diligence in procuring, collecting, and compiling this data. Consequently, CLUSO INFOLINK PRIVATE LIMITED shall not be held liable for any direct, indirect, or consequential loss, damage, or injury resulting from any errors, omissions, or negligence in the procurement or communication of this information. Reliance upon this report is strictly at the user's sole risk.
           </p>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <img src="/ozclu-logo-long-default.svg" alt="Ozclu" className="h-5 object-contain" />
-              <span className="text-[9px] font-bold text-slate-400">Powered by Ozclu Verify</span>
+              <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink" className="h-5 object-contain" />
+              <span className="text-[9px] font-bold text-slate-400">Powered by Cluso Infolink Verify</span>
             </div>
             <span className="text-[9px] text-slate-400 font-mono">Generated: {generatedAtDate}</span>
           </div>

@@ -443,7 +443,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <h3 className="font-bold text-xl text-[#181d16]">Decided Service Rates &amp; Offerings</h3>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Custom rates and SLA Turn Around Times (TAT) agreed with Ozclu Verify.</p>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">Custom rates and SLA Turn Around Times (TAT) agreed with Cluso Infolink.</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -1009,7 +1009,7 @@ export default function SettingsPage() {
               <label className="font-label-caps text-[#475569] text-[10px] font-bold uppercase tracking-wider block mb-1.5">Detailed Message <span className="text-red-500">*</span></label>
               <textarea
                 rows={3}
-                placeholder="Provide complete details, requirements, or any feedback for the Ozclu Admin team..."
+                placeholder="Provide complete details, requirements, or any feedback for the Cluso Infolink Admin team..."
                 value={reqMessage}
                 onChange={(e) => setReqMessage(e.target.value)}
                 className="w-full bg-white border border-[#eaf0e4] rounded-xl px-4 py-2.5 font-body-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#00450e]/20 font-sans resize-none"

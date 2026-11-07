@@ -1770,7 +1770,7 @@ export default function OrderSummaryPage() {
                             </p>
                               {(() => {
                                 const formattedUrl = displayVerification.setupUrl && typeof window !== "undefined" && window.location.hostname !== "localhost" && (displayVerification.setupUrl.includes("localhost") || displayVerification.setupUrl.includes("127.0.0.1"))
-                                  ? displayVerification.setupUrl.replace(/^https?:\/\/[^\/]+/, process.env.NEXT_PUBLIC_CANDIDATE_PORTAL_URL || "https://candidate.verify.ozclu.com")
+                                  ? displayVerification.setupUrl.replace(/^https?:\/\/[^\/]+/, process.env.NEXT_PUBLIC_CANDIDATE_PORTAL_URL || "https://candidate.verify.clusoinfolink.com")
                                   : displayVerification.setupUrl;
                                 return (
                                   <>

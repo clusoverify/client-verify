@@ -213,7 +213,7 @@ function DigitalAddressReportContent() {
             <div className="mb-4">
               <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider border-b border-slate-200 pb-1.5 mb-3 flex items-center justify-between">
                 <span>Geo-Tagged Watermarked Photos</span>
-                <span className="text-[9.5px] font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 px-2 py-0.5 rounded">Ozclu Watermark Verified</span>
+                <span className="text-[9.5px] font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 px-2 py-0.5 rounded">Cluso Infolink Watermark Verified</span>
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -331,7 +331,7 @@ function DigitalAddressReportContent() {
           {/* Report Footer */}
           <div className="border-t border-slate-200 pt-3 mt-3 flex justify-between items-center text-[9.5px] text-slate-400 font-medium">
             <div>
-              <span>Generated via Ozclu Digital Address Verification Portal</span>
+              <span>Generated via Cluso Infolink Digital Address Verification Portal</span>
             </div>
             <div>
               <span>Confidential Background Verification Report</span>

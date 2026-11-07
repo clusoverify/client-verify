@@ -44,7 +44,7 @@ type ServiceType = "identity" | "court_record" | "employment" | "education" | "i
 const formatSetupUrl = (url?: string) => {
   if (!url) return "";
   if (typeof window !== "undefined" && window.location.hostname !== "localhost" && (url.includes("localhost") || url.includes("127.0.0.1"))) {
-    const candidateDomain = process.env.NEXT_PUBLIC_CANDIDATE_PORTAL_URL || "https://candidate.verify.ozclu.com";
+    const candidateDomain = process.env.NEXT_PUBLIC_CANDIDATE_PORTAL_URL || "https://candidate.verify.clusoinfolink.com";
     return url.replace(/^https?:\/\/[^\/]+/, candidateDomain);
   }
   return url;
@@ -1749,7 +1749,7 @@ export default function IdentityVerification() {
   const [requestingOrgName, setRequestingOrgName] = useState("");
   const [showOrgDropdown, setShowOrgDropdown] = useState(false);
 
-  const isAdmin = profile?.role === "admin" || profile?.org_name?.toLowerCase() === "ozclu" || profile?.org_name?.toLowerCase() === "admin";
+  const isAdmin = profile?.role === "admin" || profile?.org_name?.toLowerCase() === "clusoinfolink" || profile?.org_name?.toLowerCase() === "ozclu" || profile?.org_name?.toLowerCase() === "admin";
 
   React.useEffect(() => {
     if (!isAdmin && profile?.org_name) {
@@ -1947,7 +1947,7 @@ export default function IdentityVerification() {
 
     setEmpSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addEmploymentVerification(
         empCandidateName.trim(),
         empCandidateMobile.trim(),
@@ -2026,7 +2026,7 @@ export default function IdentityVerification() {
 
     setEduSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addEducationVerification(
         eduCandidateName.trim(),
         eduCandidateMobile.trim(),
@@ -2152,7 +2152,7 @@ export default function IdentityVerification() {
     setCrSubmitting(true);
 
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
 
       const res = await addCourtRecordVerification({
         candidateName: crCandidateName.trim(),
@@ -2254,7 +2254,7 @@ export default function IdentityVerification() {
 
     setInterpolSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addInterpolVerification({
         candidateName: interpolCandidateName.trim(),
         candidateDob: interpolCandidateDob.trim(),
@@ -2325,7 +2325,7 @@ export default function IdentityVerification() {
 
     setRnwSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addRednoticeWorldwideVerification({
         candidateName: rnwCandidateName.trim(),
         candidateDob: rnwCandidateDob.trim(),
@@ -2422,7 +2422,7 @@ export default function IdentityVerification() {
 
     setSacSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addSafliiCourtVerification({
         candidateName: sacCandidateName.trim(),
         candidateDob: sacCandidateDob.trim(),
@@ -2525,7 +2525,7 @@ export default function IdentityVerification() {
 
     setSapsSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addSapsWantedVerification({
         candidateName: resolvedName,
         candidateForename: sapsCandidateForename.trim(),
@@ -2640,7 +2640,7 @@ export default function IdentityVerification() {
 
     setUkcSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addUkCourtVerification({
         candidateName: ukcCandidateName.trim(),
         candidateDob: ukcCandidateDob.trim(),
@@ -2776,7 +2776,7 @@ export default function IdentityVerification() {
 
     setMycSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addMalaysiaCourtVerification({
         candidateName: mycCandidateName.trim(),
         candidateDob: mycCandidateDob.trim(),
@@ -2927,7 +2927,7 @@ export default function IdentityVerification() {
 
     setSgcSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addSingaporeCourtVerification({
         candidateName: sgcCandidateName.trim(),
         candidateDob: sgcCandidateDob.trim(),
@@ -3072,7 +3072,7 @@ export default function IdentityVerification() {
 
     setPhcSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addPhilippinesCourtVerification({
         candidateName: phcCandidateName.trim(),
         candidateDob: phcCandidateDob.trim(),
@@ -3167,7 +3167,7 @@ export default function IdentityVerification() {
 
     setPassportSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addPassportVerification({
         fileNumber: passportFileNumber.trim(),
         dateOfBirth: passportDob,
@@ -3242,7 +3242,7 @@ export default function IdentityVerification() {
 
     setDavSubmitting(true);
     try {
-      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Ozclu") : (profile?.org_name || orgName);
+      const effectiveOrgName = isAdmin ? (orgName || profile?.org_name || "Cluso Infolink") : (profile?.org_name || orgName);
       const res = await addDigitalAddressVerification({
         candidateName: davCandidateName.trim(),
         candidateEmail: davCandidateEmail.trim(),

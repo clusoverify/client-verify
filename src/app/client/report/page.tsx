@@ -280,8 +280,8 @@ function ReportContent() {
                 <img src={settings.logo} alt="Company Logo" className="object-contain max-h-full max-w-full" />
               </div>
             ) : (
-              <div className="w-28 h-14 sm:w-32 sm:h-16 flex items-center justify-start shrink-0">
-                <img src="/ozclu-logo-long-default.svg" alt="Ozclu Logo" className="object-contain max-h-full" />
+              <div className="w-28 h-14 sm:w-36 sm:h-16 flex items-center justify-start shrink-0">
+                <img src="/cluso-logo-long-default.svg" alt="Cluso Infolink Logo" className="object-contain max-h-full" />
               </div>
             )}
           </div>
@@ -505,17 +505,17 @@ function ReportContent() {
           <div className="text-center font-bold text-slate-900 mb-2">--END OF REPORT--</div>
           <div className="font-bold text-slate-950 mb-1 uppercase tracking-wider">Important Notice &amp; Disclaimer</div>
           <p className="mb-2">
-            This report is provided by OZCLU PRIVATE LIMITED on a strictly confidential basis, solely for the exclusive use of the recipient for legitimate corporate and business purposes. It may not be reproduced, redistributed, or disclosed, in whole or in part, in any manner whatsoever without prior written consent.
+            This report is provided by CLUSO INFOLINK PRIVATE LIMITED on a strictly confidential basis, solely for the exclusive use of the recipient for legitimate corporate and business purposes. It may not be reproduced, redistributed, or disclosed, in whole or in part, in any manner whatsoever without prior written consent.
           </p>
           <p className="mb-2">
-            OZCLU PRIVATE LIMITED endeavors to ensure the highest level of accuracy and diligence in procuring, collecting, and compiling this data. Consequently, OZCLU PRIVATE LIMITED shall not be held liable for any direct, indirect, or consequential loss, damage, or injury resulting from any errors, omissions, or negligence in the procurement or communication of this information. Reliance upon this report is strictly at the user's sole risk.
+            CLUSO INFOLINK PRIVATE LIMITED endeavors to ensure the highest level of accuracy and diligence in procuring, collecting, and compiling this data. Consequently, CLUSO INFOLINK PRIVATE LIMITED shall not be held liable for any direct, indirect, or consequential loss, damage, or injury resulting from any errors, omissions, or negligence in the procurement or communication of this information. Reliance upon this report is strictly at the user's sole risk.
           </p>
           <p className="mb-3">
             The recipient acknowledges that the handling and utilization of this data must strictly align with all prevailing Indian regulatory frameworks, including but not limited to the Digital Personal Data Protection Act, 2023 (DPDP Act) and the Information Technology Act, 2000, along with all subsequent amendments and rules.
           </p>
           <div className="border-t border-slate-200 pt-2 flex justify-between items-center text-[9px] font-semibold text-slate-500">
             <div>
-              <span className="font-bold text-slate-800">QUESTIONS?</span> If you have any questions about this report, please feel free to contact us: <span className="text-primary font-bold hover:underline">support@ozclu.com</span>
+              <span className="font-bold text-slate-800">QUESTIONS?</span> If you have any questions about this report, please feel free to contact us: <span className="text-primary font-bold hover:underline">support@clusoinfolink.com</span>
             </div>
             <div className="font-mono">Rev 3.2 (15322)</div>
           </div>
@@ -523,7 +523,7 @@ function ReportContent() {
 
         {/* Centered Footer */}
         <div className="text-center text-[10px] font-bold text-slate-400 tracking-wider mt-6">
-          Generated Report By Ozclu
+          Generated Report By Cluso Infolink
         </div>
 
         {/* Appendix: Verification Evidence */}

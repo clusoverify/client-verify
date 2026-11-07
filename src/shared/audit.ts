@@ -5,7 +5,8 @@
  * Never stores raw PII, passwords, tokens, or secrets.
  */
 
-import { Db } from "mongodb";
+// MongoDB/D1 Database interface
+type Db = any;
 
 // ─── Types ─────────────────────────────────────────────────────
 

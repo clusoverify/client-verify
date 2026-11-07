@@ -1,96 +1,26 @@
-import { MongoClient, Db } from "mongodb";
-import bcrypt from "bcryptjs";
-import dns from "dns";
+/**
+ * Cloudflare D1 Database Connector for verify (Client Portal)
+ * Connects to remote D1 Database: cluso_verify (25a6cd38-46c3-47ab-8f06-756940ab3f65)
+ */
+
+import { connectToD1Database, D1Database, ObjectId } from "shared/d1Database";
 import { validateEnvironment } from "./envGuard";
 
-// Use Google DNS to resolve MongoDB Atlas SRV records
-// (the default local DNS may not support SRV lookups)
-try {
-  dns.setServers(["8.8.8.8", "8.8.4.4"]);
-} catch {
-  // Ignore — some serverless runtimes don't support dns.setServers
-}
+export { ObjectId };
 
-
-let client: MongoClient | null = null;
-let clientPromise: Promise<MongoClient> | null = null;
-let seeded = false;
 let envValidated = false;
 
-export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
-  const uri = process.env.MONGODB_URI || "";
-  if (!uri) {
-    throw new Error("Please add your MongoDB URI to .env.local");
-  }
-  if (!client) {
-    client = new MongoClient(uri);
-    clientPromise = client.connect();
-  }
-  const connectedClient = await clientPromise!;
-  const db = connectedClient.db("ozcluverify");
+export async function connectToDatabase(): Promise<{ client: any; db: D1Database }> {
+  const { db } = await connectToD1Database();
 
-  // Validate environment on first connection
   if (!envValidated) {
     validateEnvironment();
     envValidated = true;
   }
 
-  // Run automatic seeding only in development with explicit opt-in
-  if (!seeded) {
-    if (process.env.NODE_ENV !== "production" && process.env.ALLOW_SEEDING === "true") {
-      await seedDatabase(db);
-    }
-    seeded = true;
-  }
-
-  return { client: connectedClient, db };
+  return { client: null, db };
 }
 
 export async function disconnectFromDatabase(): Promise<void> {
-  if (client) {
-    try {
-      await client.close();
-    } catch (e) {
-      console.error("[MongoDB] Error closing connection:", e);
-    }
-  }
-  client = null;
-  clientPromise = null;
-  seeded = false;
-  envValidated = false;
-}
-
-
-
-async function seedDatabase(db: Db) {
-  try {
-    // Check if database is already seeded by checking users count
-    const existingUsersCount = await db.collection("users").countDocuments();
-    if (existingUsersCount > 0) {
-      return;
-    }
-
-    const hashedAdminPassword = bcrypt.hashSync("Ozclu@2026", 10);
-    await db.collection("users").insertMany([
-      {
-        email: "indiaops@ozclu.com",
-        password: hashedAdminPassword,
-        fullName: "India Ops",
-        role: "admin",
-        orgName: "Ozclu",
-        createdAt: new Date()
-      },
-      {
-        email: "pkumar@ozclu.com",
-        password: hashedAdminPassword,
-        fullName: "P Kumar",
-        role: "admin",
-        orgName: "Ozclu",
-        createdAt: new Date()
-      }
-    ]);
-    console.log("[Seed] Created 2 admin users: indiaops@ozclu.com, pkumar@ozclu.com");
-  } catch (error) {
-    console.error("Seeding error in MongoDB:", error);
-  }
+  // Cloudflare D1 uses stateless HTTP API / edge bindings
 }

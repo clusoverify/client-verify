@@ -31,6 +31,8 @@ export interface ApiAuthResult {
     sapsWantedRate?: number;
     ukCourtRate?: number;
     malaysiaCourtRate?: number;
+    singaporeCourtRate?: number;
+    philippinesCourtRate?: number;
     // Per-service enabled flags
     identityEnabled?: boolean;
     courtRecordEnabled?: boolean;
@@ -44,6 +46,8 @@ export interface ApiAuthResult {
     sapsWantedEnabled?: boolean;
     ukCourtEnabled?: boolean;
     malaysiaCourtEnabled?: boolean;
+    singaporeCourtEnabled?: boolean;
+    philippinesCourtEnabled?: boolean;
     apiEnabled?: boolean;
   };
   apiKey: {
@@ -192,6 +196,8 @@ export async function authenticateApiKey(
       sapsWantedRate: org.sapsWantedRate,
       ukCourtRate: org.ukCourtRate,
       malaysiaCourtRate: org.malaysiaCourtRate,
+      singaporeCourtRate: org.singaporeCourtRate,
+      philippinesCourtRate: org.philippinesCourtRate,
       identityEnabled: org.identityEnabled,
       courtRecordEnabled: org.courtRecordEnabled,
       employmentEnabled: org.employmentEnabled,
@@ -204,6 +210,8 @@ export async function authenticateApiKey(
       sapsWantedEnabled: org.sapsWantedEnabled,
       ukCourtEnabled: org.ukCourtEnabled,
       malaysiaCourtEnabled: org.malaysiaCourtEnabled,
+      singaporeCourtEnabled: org.singaporeCourtEnabled,
+      philippinesCourtEnabled: org.philippinesCourtEnabled,
       apiEnabled: org.apiEnabled !== false,
     },
     apiKey: {

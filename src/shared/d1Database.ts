@@ -223,8 +223,27 @@ function applyUpdate(doc: any, update: any): any {
     }
   }
 
+  if (update.$addToSet) {
+    for (const [k, v] of Object.entries(update.$addToSet)) {
+      if (!Array.isArray(updated[k])) {
+        updated[k] = [];
+      }
+      if (!updated[k].includes(v)) {
+        updated[k] = [...updated[k], v];
+      }
+    }
+  }
+
+  if (update.$pull) {
+    for (const [k, v] of Object.entries(update.$pull)) {
+      if (Array.isArray(updated[k])) {
+        updated[k] = updated[k].filter((item: any) => item !== v);
+      }
+    }
+  }
+
   // Raw replacement if no operators
-  if (!update.$set && !update.$inc && !update.$push && !update.$unset) {
+  if (!update.$set && !update.$inc && !update.$push && !update.$unset && !update.$addToSet && !update.$pull) {
     return { ...doc, ...update };
   }
 
@@ -405,19 +424,120 @@ export class D1Collection<T = any> {
         jsonStr
       );
     } else if (this.tableName === "verifications") {
+      let orgId = fullDoc.organisation_id || fullDoc.organisationId || fullDoc.orgId;
+      if (!orgId) {
+        const targetOrgName = String(fullDoc.orgName || fullDoc.requestingOrgName || fullDoc.requesting_org_name || "").toLowerCase();
+        if (targetOrgName.includes("global")) {
+          orgId = "ORG-1002";
+        } else if (targetOrgName.includes("ozclu") || targetOrgName.includes("cluso") || targetOrgName.includes("admin")) {
+          orgId = "ORG-CLUSO";
+        } else {
+          orgId = "ORG-1001";
+        }
+      }
+      const reqOrg = fullDoc.requestingOrgName || fullDoc.requesting_org_name || fullDoc.orgName || "Acme Corporation";
+      const candName = fullDoc.name || fullDoc.candidate_name || "Unknown Candidate";
+      const candEmail = email || fullDoc.candidate_email || "";
+      const candPhone = fullDoc.candidatePhone || fullDoc.phone || fullDoc.mobile || null;
+      const status = fullDoc.status || "Processing";
+      const notes = fullDoc.notes || "";
+      const tempPass = fullDoc.tempPassword || fullDoc.temp_password || null;
+      const verifierName = fullDoc.verifier || fullDoc.verifierName || fullDoc.verifier_name || "System";
+      const isDel = fullDoc.isDeleted ? 1 : 0;
+
       sql = `
-        INSERT INTO verifications (id, candidate_name, candidate_email, requesting_org_name, status, notes, temp_password, is_deleted, data)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = datetime('now');
+        INSERT INTO verifications (
+          id, organisation_id, requesting_org_name, candidate_name, candidate_email,
+          candidate_phone, status, notes, temp_password, verifier_name, is_deleted, data
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          organisation_id = excluded.organisation_id,
+          requesting_org_name = excluded.requesting_org_name,
+          candidate_name = excluded.candidate_name,
+          candidate_email = excluded.candidate_email,
+          status = excluded.status,
+          notes = excluded.notes,
+          temp_password = excluded.temp_password,
+          verifier_name = excluded.verifier_name,
+          is_deleted = excluded.is_deleted,
+          data = excluded.data,
+          updated_at = datetime('now');
+      `;
+      params.push(id, orgId, reqOrg, candName, candEmail, candPhone, status, notes, tempPass, verifierName, isDel, jsonStr);
+    } else if (this.tableName === "organisations") {
+      const orgName = fullDoc.name || fullDoc.orgName || fullDoc.companyName || id;
+      const rate = Number(fullDoc.monthlyRate ?? fullDoc.monthly_rate ?? 500);
+      const plan = fullDoc.paymentPlan || fullDoc.payment_plan || "monthly";
+      sql = `
+        INSERT INTO organisations (id, name, payment_plan, monthly_rate, is_deleted, data)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          name = excluded.name,
+          payment_plan = excluded.payment_plan,
+          monthly_rate = excluded.monthly_rate,
+          data = excluded.data,
+          updated_at = datetime('now');
+      `;
+      params.push(id, orgName, plan, rate, fullDoc.isDeleted ? 1 : 0, jsonStr);
+    } else if (this.tableName === "invoices") {
+      let orgId = fullDoc.organisation_id || fullDoc.organisationId || fullDoc.orgId;
+      if (!orgId) {
+        const targetOrgName = String(fullDoc.orgName || "").toLowerCase();
+        if (targetOrgName.includes("global")) {
+          orgId = "ORG-1002";
+        } else if (targetOrgName.includes("ozclu") || targetOrgName.includes("cluso") || targetOrgName.includes("admin")) {
+          orgId = "ORG-CLUSO";
+        } else {
+          orgId = "ORG-1001";
+        }
+      }
+      const orgName = fullDoc.orgName || fullDoc.org_name || "Acme Corporation";
+      const billingMonth = fullDoc.billingMonth || fullDoc.billing_month || new Date().toLocaleString("en-US", { month: "long" });
+      const billingYear = Number(fullDoc.billingYear || fullDoc.billing_year || new Date().getFullYear());
+      const dueDate = fullDoc.dueDate || fullDoc.due_date || new Date().toISOString().split("T")[0];
+      const amount = Number(fullDoc.amount) || 0;
+      const currency = fullDoc.currency || "USD";
+      const status = fullDoc.status || "Unpaid";
+
+      sql = `
+        INSERT INTO invoices (
+          id, organisation_id, org_name, billing_month, billing_year, due_date,
+          amount, currency, status, payment_proof_uri, payment_proof_date,
+          client_note, admin_note, is_deleted, data
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          status = excluded.status,
+          payment_proof_uri = excluded.payment_proof_uri,
+          payment_proof_date = excluded.payment_proof_date,
+          client_note = excluded.client_note,
+          admin_note = excluded.admin_note,
+          data = excluded.data,
+          updated_at = datetime('now');
+      `;
+      params.push(
+        id, orgId, orgName, billingMonth, billingYear, dueDate,
+        amount, currency, status, fullDoc.paymentProof || fullDoc.payment_proof_uri || null,
+        fullDoc.paymentProofDate || fullDoc.payment_proof_date || null,
+        fullDoc.clientNote || fullDoc.client_note || null,
+        fullDoc.adminNote || fullDoc.admin_note || null,
+        fullDoc.isDeleted ? 1 : 0, jsonStr
+      );
+    } else if (this.tableName === "verifiers") {
+      sql = `
+        INSERT INTO verifiers (id, name, email, is_deleted, data)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+          name = excluded.name,
+          email = excluded.email,
+          data = excluded.data,
+          updated_at = datetime('now');
       `;
       params.push(
         id,
-        fullDoc.name || fullDoc.candidate_name || "",
-        email || "",
-        fullDoc.orgName || fullDoc.requesting_org_name || "",
-        fullDoc.status || "Processing",
-        fullDoc.notes || "",
-        fullDoc.tempPassword || fullDoc.temp_password || null,
+        fullDoc.name || "Verifier",
+        email || fullDoc.email || "",
         fullDoc.isDeleted ? 1 : 0,
         jsonStr
       );
